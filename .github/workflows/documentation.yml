@@ -1,0 +1,33 @@
+name: Documentation
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e '.[dev]'
+        python3 setup.py build_ext --inplace
+        git config --global user.email "defossez@fb.com"
+        git config --global user.name "Alexandre Défossez (autodoc)"
+    - name: Reset branch
+      run: |
+        git branch -f gh-pages main
+        git checkout gh-pages
+    - name: Make docs
+      run: |
+        make docs
+        git add -f docs
+        git commit -m docs
+    - name: Push branch
+      run: |
+        git push -f -u origin gh-pages

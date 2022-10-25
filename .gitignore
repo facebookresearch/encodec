@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# macOS dir files
+.DS_Store
+
+# Distribution / packaging
+.Python
+docs/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+# personal notebooks & scripts
+/notebooks
+/local_scripts
+/notes
+/tmp
+
+# script outputs
+/processed
+/experiments
+
+/test_*.ecdc
+/test_*_decompressed.wav
