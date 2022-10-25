@@ -31,8 +31,7 @@ entropy coding, by clicking the thumbnail (original tracks provided by [Lucille 
 <p align="center">
 <a href="https://ai.honu.io/papers/encodec/final.mp4">
 <img src="./thumbnail.png" alt="Thumbnail for the sample video.
-	You will first here the ground truth, then ~3kbps, then 12kbps, for two songs."
-width="800px"></a></p>
+	You will first here the ground truth, then ~3kbps, then 12kbps, for two songs."></a></p>
 
 
 ## What's up?
