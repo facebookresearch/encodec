@@ -4,5 +4,4 @@ include setup.cfg
 include Makefile
 include mypy.ini
 include encodec/py.typed
-include encodec/checkpoints/*.th
-include test.wav
+include test_*.wav

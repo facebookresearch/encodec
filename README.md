@@ -1,16 +1,26 @@
-# EnCodec: High Fidelity Neural Audio Codec
+# EnCodec: High Fidelity Neural Audio Compression
 ![linter badge](https://github.com/facebookresearch/encodec/workflows/linter/badge.svg)
 ![tests badge](https://github.com/facebookresearch/encodec/workflows/tests/badge.svg)
 
-This is the code for the EnCodec neural codec presented in the "High Fidelity Neural Audio Codec"
+This is the code for the EnCodec neural codec presented in the [High Fidelity Neural Audio Compression](https://arxiv.org/pdf/2210.13438.pdf) [[abs]](https://arxiv.org/abs/2210.13438).
 paper. We provide our two multi-bandwidth models:
 * A causal model operating at 24 kHz on monophonic audio trained on a variety of audio data.
 * A non-causal model operationg at 48 kHz on stereophonic audio trained on music-only data.
 
 The 24 kHz model can compress to 1.5, 3, 6, 12 or 24 kbps, while the 48 kHz model
-support 3, 6, 12 and 24 kbps.
+support 3, 6, 12 and 24 kbps. We also provide a pre-trained language model for each
+of the models, that can further compress the representation by up to 40% without
+any further loss of quality.
 
 For reference, we also provide the code for our novel MS-STFT discriminator.
+
+<p align="center">
+<img src="./architecture.png" alt="Schema representing the structure of Encodec,
+    with a convolutional+LSTM encoder, a Residual Vector Quantization in the middle,
+    followed by a convolutional+LSTM decoder. A multiscale complex spectrogram discriminator is applied to the output, along with objective reconstruction losses.
+    A small transformer model is trained to predict the RVQ output."
+width="800px"></p>
+
 
 ## What's up?
 
@@ -129,7 +139,12 @@ make tests
 If you use this code or results in your paper, please cite our work as:
 
 ```
-TODO
+@article{defossez2022highfi,
+  title={High Fidelity Neural Audio Compression},
+  author={Défossez, Alexandre and Copet, Jade and Synnaeve, Gabriel and Adi, Yossi},
+  journal={arXiv preprint arXiv:2210.13438},
+  year={2022}
+}
 ```
 
 ## License
