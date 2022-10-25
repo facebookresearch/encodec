@@ -43,7 +43,8 @@ See [the changelog](CHANGELOG.md) for details on releases.
 EnCodec requires Python 3.8, and a reasonably recent version of PyTorch (1.11.0 ideally).
 To install EnCodec, you can run from this repository:
 ```bash
-pip install -U git+https://git@github.com/facebookresearch/encodec#egg=encodec
+pip install -U encodec  # stable release
+pip install -U git+https://git@github.com/facebookresearch/encodec#egg=encodec  # bleeding edge
 # of if you cloned the repo locally
 pip install .
 ```
