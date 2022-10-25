@@ -65,7 +65,9 @@ def check_output_exists(args):
         fatal(f"Output file {args.output} exist. Use -f / --force to overwrite.")
 
 
-def check_clipping(wav):
+def check_clipping(wav, args):
+    if args.rescale:
+        return
     mx = wav.abs().max()
     limit = 0.99
     if mx > limit:
@@ -88,7 +90,7 @@ def main():
             fatal("Output extension must be .wav")
         check_output_exists(args)
         out, out_sample_rate = decompress(args.input.read_bytes())
-        check_clipping(out)
+        check_clipping(out, args)
         save_audio(out, args.output, out_sample_rate, rescale=args.rescale)
     else:
         # Compression
@@ -113,7 +115,7 @@ def main():
             # Directly run decompression stage
             assert args.output.suffix.lower() == '.wav'
             out, out_sample_rate = decompress(compressed)
-            check_clipping(out)
+            check_clipping(out, args)
             save_audio(out, args.output, out_sample_rate, rescale=args.rescale)
 
 
