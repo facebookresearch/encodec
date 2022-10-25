@@ -22,6 +22,19 @@ For reference, we also provide the code for our novel MS-STFT discriminator.
 width="800px"></p>
 
 
+## Samples
+
+Samples including baselines are provided on [our sample page](https://ai.honu.io/papers/encodec/samples.html).
+You can also have a quick demo of what we achieve for 48 kHz music with EnCodec, along with
+entropy coding, by clicking the thumbnail (original tracks provided by [Lucille Crew](https://open.spotify.com/artist/5eLv7rNfrf3IjMnK311ByP?si=X_zD9ackRRGjFP5Y6Q7Zng) and [Voyageur I](https://open.spotify.com/artist/21HymveeIhDcM4KDKeNLz0?si=4zXF8VpeQpeKR9QUIuck9Q)).
+
+<p align="center">
+<a href="https://ai.honu.io/papers/encodec/final.mp4">
+<img src="./thumbnail.png" alt="Thumbnail for the sample video.
+	You will first here the ground truth, then ~3kbps, then 12kbps, for two songs."
+width="800px"></a></p>
+
+
 ## What's up?
 
 See [the changelog](CHANGELOG.md) for details on releases.
