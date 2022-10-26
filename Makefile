@@ -12,7 +12,7 @@ tests:
 	python3 -m encodec.modules.seanet
 	python3 -m encodec.msstftd
 	python3 -m encodec.quantization.ac
-	python3 -m encodec.msstftd
+	python3 -m encodec.balancer
 	test ! -f test_24k_decompressed.wav || rm test_24k_decompressed.wav; \
 		python3 -m encodec test_24k.wav test_24k.ecdc -f && \
 		python3 -m encodec test_24k.ecdc test_24k_decompressed.wav -f

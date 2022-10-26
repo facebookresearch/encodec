@@ -12,7 +12,7 @@ support 3, 6, 12 and 24 kbps. We also provide a pre-trained language model for e
 of the models, that can further compress the representation by up to 40% without
 any further loss of quality.
 
-For reference, we also provide the code for our novel MS-STFT discriminator.
+For reference, we also provide the code for our novel [MS-STFT discriminator](encodec/msstftd.py) and the [balancer](encodec/balancer.py).
 
 <p align="center">
 <img src="./architecture.png" alt="Schema representing the structure of Encodec,

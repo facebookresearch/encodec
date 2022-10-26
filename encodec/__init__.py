@@ -7,7 +7,7 @@
 
 """EnCodec neural audio codec."""
 
-__version__ = "0.1.1"
+__version__ = "0.1.2a1"
 
 from .model import EncodecModel
 from .compress import compress, decompress
