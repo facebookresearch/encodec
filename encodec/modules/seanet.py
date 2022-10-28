@@ -234,8 +234,7 @@ class SEANetDecoder(nn.Module):
         self.model = nn.Sequential(*model)
 
     def forward(self, z):
-        y = self.model(z)
-        return y
+        return self.model(z)
 
 
 def test():
