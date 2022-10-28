@@ -270,7 +270,7 @@ def test():
         fo = io.BytesIO()
         encoder = ArithmeticCoder(fo)
         symbols = []
-        for step in range(steps):
+        for _ in range(steps):
             pdf = torch.softmax(torch.randn(cardinality), dim=0)
             pdfs.append(pdf)
             q_cdf = build_stable_quantized_cdf(pdf, encoder.total_range_bits)

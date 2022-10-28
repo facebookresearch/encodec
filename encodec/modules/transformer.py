@@ -92,7 +92,7 @@ class StreamingTransformerEncoder(nn.Module):
             self.norm_in = nn.Identity()
 
         self.layers = nn.ModuleList()
-        for idx in range(num_layers):
+        for _ in range(num_layers):
             self.layers.append(
                 StreamingTransformerEncoderLayer(
                     dim, num_heads, hidden_dim,
