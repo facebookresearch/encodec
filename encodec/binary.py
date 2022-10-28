@@ -125,7 +125,7 @@ class BitUnpacker:
 def test():
     import torch
     torch.manual_seed(1234)
-    for rep in range(4):
+    for _ in range(4):
         length: int = torch.randint(10, 2_000, (1,)).item()
         bits: int = torch.randint(1, 16, (1,)).item()
         tokens: tp.List[int] = torch.randint(2 ** bits, (length,)).tolist()

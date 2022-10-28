@@ -59,7 +59,7 @@ class LMModel(nn.Module):
 
         """
         B, K, T = indices.shape
-        input_ = sum([self.emb[k](indices[:, k]) for k in range(K)])
+        input_ = sum(self.emb[k](indices[:, k]) for k in range(K))
         out, states, offset = self.transformer(input_, states, offset)
         logits = torch.stack([self.linears[k](out) for k in range(K)], dim=1).permute(0, 3, 1, 2)
         return torch.softmax(logits, dim=1), states, offset
@@ -268,7 +268,6 @@ class EncodecModel(nn.Module):
         if repository:
             assert pretrained
         target_bandwidths = [1.5, 3., 6, 12., 24.]
-        checkpoint_name = 'encodec_24khz-d7cc33bc.th'
         sample_rate = 24_000
         channels = 1
         model = EncodecModel._get_model(
@@ -276,6 +275,7 @@ class EncodecModel(nn.Module):
             causal=True, model_norm='weight_norm', audio_normalize=False,
             name='encodec_24khz' if pretrained else 'unset')
         if pretrained:
+            checkpoint_name = 'encodec_24khz-d7cc33bc.th'
             state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
             model.load_state_dict(state_dict)
         model.eval()

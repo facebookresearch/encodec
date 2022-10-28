@@ -122,7 +122,8 @@ class EuclideanCodebook(nn.Module):
     ):
         super().__init__()
         self.decay = decay
-        init_fn: tp.Union[tp.Callable[..., torch.Tensor], tp.Any] = uniform_init if not kmeans_init else torch.zeros
+        init_fn: tp.Union[tp.Callable[..., torch.Tensor], tp.Any] = torch.zeros if kmeans_init else uniform_init
+
         embed = init_fn(codebook_size, dim)
 
         self.codebook_size = codebook_size
