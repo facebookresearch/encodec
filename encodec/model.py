@@ -59,7 +59,7 @@ class LMModel(nn.Module):
 
         """
         B, K, T = indices.shape
-        input_ = sum([self.emb[k](indices[:, k]) for k in range(K)])
+        input_ = sum(self.emb[k](indices[:, k]) for k in range(K))
         out, states, offset = self.transformer(input_, states, offset)
         logits = torch.stack([self.linears[k](out) for k in range(K)], dim=1).permute(0, 3, 1, 2)
         return torch.softmax(logits, dim=1), states, offset

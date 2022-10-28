@@ -138,9 +138,9 @@ def test():
     y_disc_gen, fmap_gen = disc(y_hat)
     assert len(y_disc_r) == len(y_disc_gen) == len(fmap_r) == len(fmap_gen) == disc.num_discriminators
 
-    assert all([len(fm) == 5 for fm in fmap_r + fmap_gen])
-    assert all([list(f.shape)[:2] == [1, 32] for fm in fmap_r + fmap_gen for f in fm])
-    assert all([len(logits.shape) == 4 for logits in y_disc_r + y_disc_gen])
+    assert all(len(fm) == 5 for fm in fmap_r + fmap_gen)
+    assert all(list(f.shape)[:2] == [1, 32] for fm in fmap_r + fmap_gen for f in fm)
+    assert all(len(logits.shape) == 4 for logits in y_disc_r + y_disc_gen)
 
 
 if __name__ == '__main__':
