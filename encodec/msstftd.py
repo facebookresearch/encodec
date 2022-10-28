@@ -88,7 +88,7 @@ class DiscriminatorSTFT(nn.Module):
         z = self.spec_transform(x)  # [B, 2, Freq, Frames, 2]
         z = torch.cat([z.real, z.imag], dim=1)
         z = rearrange(z, 'b c w t -> b c t w')
-        for i, layer in enumerate(self.convs):
+        for layer in self.convs:
             z = layer(z)
             z = self.activation(z)
             fmap.append(z)
