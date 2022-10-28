@@ -93,9 +93,7 @@ class Balancer:
             norms[name] = norm
             grads[name] = grad
 
-        count = 1
-        if self.per_batch_item:
-            count = len(grad)
+        count = len(grad) if self.per_batch_item else 1
         avg_norms = average_metrics(self.averager(norms), count)
         total = sum(avg_norms.values())
 
@@ -104,7 +102,7 @@ class Balancer:
             for k, v in avg_norms.items():
                 self._metrics[f'ratio_{k}'] = v / total
 
-        total_weights = sum([self.weights[k] for k in avg_norms])
+        total_weights = sum(self.weights[k] for k in avg_norms)
         ratios = {k: w / total_weights for k, w in self.weights.items()}
 
         out_grad: tp.Any = 0
