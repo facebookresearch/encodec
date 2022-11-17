@@ -97,4 +97,4 @@ def save_audio(wav: torch.Tensor, path: tp.Union[Path, str],
         wav = wav * min(limit / mx, 1)
     else:
         wav = wav.clamp(-limit, limit)
-    torchaudio.save(path, wav, sample_rate=sample_rate, encoding='PCM_S', bits_per_sample=16)
+    torchaudio.save(str(path), wav, sample_rate=sample_rate, encoding='PCM_S', bits_per_sample=16)
