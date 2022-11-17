@@ -49,6 +49,8 @@ pip install -U git+https://git@github.com/facebookresearch/encodec#egg=encodec  
 pip install .
 ```
 
+**Supported platforms:** we officially support only Mac OS X (you might need XCode installed if running on a non Intel Mac), and recent versions of mainstream Linux distributions. We will try to help out on Windows but cannot provide strong support. Any other platform (iOS / Android / onboard ARM) are not supported.
+
 ## Usage
 
 You can then use the EnCodec command, either as
