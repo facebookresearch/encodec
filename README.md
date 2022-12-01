@@ -150,6 +150,19 @@ You can run the unit tests with
 make tests
 ```
 
+## FAQ
+
+Please check this section before opening an issue.
+
+### Out of memory errors with long files
+
+We do not try to be smart about long files, and we apply the model at once on the entire file. This can lead to a large memory usage
+and result in the process being killed. At the moment we will not support this use case.
+
+### Bad interactions between DistributedDataParallel and the RVQ code
+
+We do not use DDP, instead we recommend using the routines in `encodec/distrib.py`, in particular `encodec.distrib.sync_buffer` and `encodec.distrib.sync_grad`.
+
 ## Citation
 
 If you use this code or results in your paper, please cite our work as:
