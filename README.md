@@ -126,7 +126,8 @@ wav = wav.unsqueeze(0)
 wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 
 # Extract discrete codes from EnCodec
-encoded_frames = model.encode(wav)
+with torch.no_grad():
+    encoded_frames = model.encode(wav)
 codes = torch.cat([encoded[0] for encoded in encoded_frames], dim=-1)  # [B, n_q, T]
 ```
 
