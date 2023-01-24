@@ -120,8 +120,8 @@ model.set_target_bandwidth(6.0)
 
 # Load and pre-process the audio waveform
 wav, sr = torchaudio.load("<PATH_TO_AUDIO_FILE>")
-wav = wav.unsqueeze(0)
 wav = convert_audio(wav, sr, model.sample_rate, model.channels)
+wav = wav.unsqueeze(0)
 
 # Extract discrete codes from EnCodec
 encoded_frames = model.encode(wav)
