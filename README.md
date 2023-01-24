@@ -49,6 +49,8 @@ pip install -U git+https://git@github.com/facebookresearch/encodec#egg=encodec  
 pip install .
 ```
 
+**Supported platforms:** we officially support only Mac OS X (you might need XCode installed if running on a non Intel Mac), and recent versions of mainstream Linux distributions. We will try to help out on Windows but cannot provide strong support. Any other platform (iOS / Android / onboard ARM) are not supported.
+
 ## Usage
 
 You can then use the EnCodec command, either as
@@ -124,7 +126,8 @@ wav = convert_audio(wav, sr, model.sample_rate, model.channels)
 wav = wav.unsqueeze(0)
 
 # Extract discrete codes from EnCodec
-encoded_frames = model.encode(wav)
+with torch.no_grad():
+    encoded_frames = model.encode(wav)
 codes = torch.cat([encoded[0] for encoded in encoded_frames], dim=-1)  # [B, n_q, T]
 ```
 
@@ -146,6 +149,19 @@ You can run the unit tests with
 ```
 make tests
 ```
+
+## FAQ
+
+Please check this section before opening an issue.
+
+### Out of memory errors with long files
+
+We do not try to be smart about long files, and we apply the model at once on the entire file. This can lead to a large memory usage
+and result in the process being killed. At the moment we will not support this use case.
+
+### Bad interactions between DistributedDataParallel and the RVQ code
+
+We do not use DDP, instead we recommend using the routines in `encodec/distrib.py`, in particular `encodec.distrib.sync_buffer` and `encodec.distrib.sync_grad`.
 
 ## Citation
 

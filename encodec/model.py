@@ -199,7 +199,6 @@ class EncodecModel(nn.Module):
     def get_lm_model(self) -> LMModel:
         """Return the associated LM model to improve the compression rate.
         """
-        torch.manual_seed(1234)  # todo remove: this
         device = next(self.parameters()).device
         lm = LMModel(self.quantizer.n_q, self.quantizer.bins, num_layers=5, dim=200,
                      past_context=int(3.5 * self.frame_rate)).to(device)
