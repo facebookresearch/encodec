@@ -5,7 +5,7 @@
 This is the code for the EnCodec neural codec presented in the [High Fidelity Neural Audio Compression](https://arxiv.org/pdf/2210.13438.pdf) [[abs]](https://arxiv.org/abs/2210.13438).
 paper. We provide our two multi-bandwidth models:
 * A causal model operating at 24 kHz on monophonic audio trained on a variety of audio data.
-* A non-causal model operationg at 48 kHz on stereophonic audio trained on music-only data.
+* A non-causal model operating at 48 kHz on stereophonic audio trained on music-only data.
 
 The 24 kHz model can compress to 1.5, 3, 6, 12 or 24 kbps, while the 48 kHz model
 support 3, 6, 12 and 24 kbps. We also provide a pre-trained language model for each
