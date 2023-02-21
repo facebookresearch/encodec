@@ -111,7 +111,7 @@ def sync_grad(params):
 
 def average_metrics(metrics: tp.Dict[str, float], count=1.):
     """Average a dictionary of metrics across all workers, using the optional
-    `count` as unormalized weight.
+    `count` as unnormalized weight.
     """
     if not is_distributed():
         return metrics
