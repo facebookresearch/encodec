@@ -117,7 +117,7 @@ def decompress_from_file(fo: tp.IO[bytes], device='cpu') -> tp.Tuple[torch.Tenso
     segment_stride = model.segment_stride or audio_length
     for offset in range(0, audio_length, segment_stride):
         this_segment_length = min(audio_length - offset, segment_length)
-        frame_length = int(math.ceil(this_segment_length / model.sample_rate * model.frame_rate))
+        frame_length = int(math.ceil(this_segment_length * model.frame_rate / model.sample_rate))
         if model.normalize:
             scale_f, = struct.unpack('!f', binary._read_exactly(fo, struct.calcsize('!f')))
             scale = torch.tensor(scale_f, device=device).view(1)
