@@ -13,6 +13,8 @@ Installing is another way to solve the issue.
 
 Fix bug in convert audio that would not work properly with shapes [*, C, T].
 
+Fixing incorrect order of operations when evaluating the number of frames (thanks @chenjiasheng  for the report).
+
 ## [0.1.1] - 2022-10-25
 
 Removed useless warning when using `-r` option.
