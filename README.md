@@ -129,6 +129,10 @@ wav = wav.unsqueeze(0)
 with torch.no_grad():
     encoded_frames = model.encode(wav)
 codes = torch.cat([encoded[0] for encoded in encoded_frames], dim=-1)  # [B, n_q, T]
+# Note: number of quantizers is determined by the model's bandwidth, not model.n_q, if we set target bandwidth 
+# like we've done here. Each quantizer has `bins` which is log_2(bins) bits per frame, so each quantizer has a 
+# bandwidth of log_2(bins) * framerate. This, combined with target bandwidth, fully determines the number of 
+# quantizers to use, and n_q doesn't get used.
 ```
 
 Note that the 48 kHz model processes the audio by chunks of 1 seconds, with an overlap of 1%,
