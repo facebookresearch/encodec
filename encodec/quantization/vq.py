@@ -89,7 +89,8 @@ class ResidualVectorQuantizer(nn.Module):
         bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
         n_q = self.n_q
         if bandwidth and bandwidth > 0.:
-            # bandwidth is represented as a thousandth of what it is, e.g. 6kbps bandwidth is represented as bandwidth == 6.0
+            # bandwidth is represented as a thousandth of what it is, e.g. 6kbps bandwidth is represented as
+            # bandwidth == 6.0
             n_q = int(max(1, math.floor(bandwidth * 1000 / bw_per_q)))
         return n_q
 
