@@ -59,3 +59,4 @@ setup(
         'Topic :: Multimedia :: Sound/Audio',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'License :: OSI Approved :: MIT License',
+    ])
