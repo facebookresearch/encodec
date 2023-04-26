@@ -183,5 +183,5 @@ If you use this code or results in your paper, please cite our work as:
 
 ## License
 
-This repository is released under the CC-BY-NC 4.0. license as found in the
+The code in this repository is released under the MIT license as found in the
 [LICENSE](LICENSE) file.

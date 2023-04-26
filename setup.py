@@ -52,11 +52,10 @@ setup(
     entry_points={
         'console_scripts': ['encodec=encodec.__main__:main'],
     },
-    license='Creative Commons Attribution-NonCommercial 4.0 International',
+    license='MIT License',
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Topic :: Multimedia :: Sound/Audio',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
-    ],
-)
+        'License :: OSI Approved :: MIT License',
