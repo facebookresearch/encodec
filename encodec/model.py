@@ -13,6 +13,7 @@ import typing as tp
 import numpy as np
 import torch
 from torch import nn
+from tqdm.auto import tqdm
 
 from . import quantization as qt
 from . import modules as m
@@ -139,7 +140,7 @@ class EncodecModel(nn.Module):
             assert stride is not None
 
         encoded_frames: tp.List[EncodedFrame] = []
-        for offset in range(0, length, stride):
+        for offset in tqdm(list(range(0, length, stride))):
             frame = x[:, :, offset: offset + segment_length]
             encoded_frames.append(self._encode_frame(frame))
         return encoded_frames
