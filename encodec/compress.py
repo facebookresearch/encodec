@@ -179,11 +179,12 @@ def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False, get_e
     fo = io.BytesIO()
     if get_embeddings:
         frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=0.5)
-        #frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=0.01)
+        # Good but slow to save
+        #frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=0.5)
     else:
         frames = compress_to_file(model, wav, fo, use_lm=use_lm)
     if get_embeddings:
-        embs = torch.cat([f[2].cpu() for f in frames if f[2].shape[2] == 150], dim=0)
+        embs = torch.cat([f[2] for f in frames if f[2].shape[2] == 150], dim=0).cpu()
         return embs
     else:
         return fo.getvalue()
