@@ -89,7 +89,7 @@ def convert_audio(wav: torch.Tensor, sr: int, target_sr: int, target_channels: i
     else:
         raise RuntimeError(f"Impossible to convert from {channels} to {target_channels}")
     if torch.cuda.is_available():
-        wav = torchaudio.transforms.Resample(sr, target_sr, device="cuda")(wav)
+        wav = torchaudio.transforms.Resample(sr, target_sr).to("cuda")(wav)
     else:
         wav = torchaudio.transforms.Resample(sr, target_sr)(wav)
     return wav
