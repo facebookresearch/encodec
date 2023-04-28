@@ -12,6 +12,7 @@ import sys
 
 import torchaudio
 import torch
+import time
 
 from .compress import compress, decompress, MODELS
 from .utils import save_audio, convert_audio
@@ -98,6 +99,7 @@ def main():
         assert args.bandwidth == 24
         model.set_target_bandwidth(args.bandwidth)
 
+        start = time.time()
         wav, sr = torchaudio.load(args.input)
         if torch.cuda.is_available():
             model.to("cuda")
@@ -106,6 +108,7 @@ def main():
         emb = compress(model, wav, use_lm=args.lm, get_embeddings=True)
         print(emb.shape)
         torch.save(emb, args.output)
+        print(time.time() - start)
 
 if __name__ == '__main__':
     main()
