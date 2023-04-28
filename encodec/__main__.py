@@ -100,8 +100,8 @@ def main():
 
         wav, sr = torchaudio.load(args.input)
         if torch.cuda.is_available():
-            model.cuda()
-            wav.cuda()
+            model.to("cuda")
+            wav.to("cuda")
         wav = convert_audio(wav, sr, model.sample_rate, model.channels)
         emb = compress(model, wav, use_lm=args.lm, get_embeddings=True)
         print(emb.shape)
