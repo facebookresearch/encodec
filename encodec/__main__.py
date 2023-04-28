@@ -11,6 +11,7 @@ from pathlib import Path
 import sys
 
 import torchaudio
+import torch
 
 from .compress import compress, decompress, MODELS
 from .utils import save_audio, convert_audio
@@ -44,6 +45,9 @@ def get_parser():
     parser.add_argument(
         '-f', '--force', action='store_true',
         help='Overwrite output file if it exists.')
+    parser.add_argument(
+        '-e', '--encoding', action='store_true',
+        help='Save encodings, not compressed RQs.')
     parser.add_argument(
         '-s', '--decompress_suffix', type=str, default='_decompressed',
         help='Suffix for the decompressed output file (if no output path specified)')
@@ -81,6 +85,27 @@ def main():
     args = get_parser().parse_args()
     if not args.input.exists():
         fatal(f"Input file {args.input} does not exist.")
+
+    if args.encoding:
+        # Compress but save encodins
+        args.output = args.input.with_suffix(".pt")
+
+        model_name = 'encodec_48khz' if args.hq else 'encodec_24khz'
+        assert args.hq
+        model = MODELS[model_name]()
+        if args.bandwidth not in model.target_bandwidths:
+            fatal(f"Bandwidth {args.bandwidth} is not supported by the model {model_name}")
+        assert args.bandwidth == 24
+        model.set_target_bandwidth(args.bandwidth)
+
+        wav, sr = torchaudio.load(args.input)
+        wav = convert_audio(wav, sr, model.sample_rate, model.channels)
+        emb = compress(model, wav, use_lm=args.lm, get_embeddings=True)
+        print(emb.shape)
+        torch.save(emb, args.output)
+
+if __name__ == '__main__':
+    main()
 
     if args.input.suffix.lower() == SUFFIX:
         # Decompression

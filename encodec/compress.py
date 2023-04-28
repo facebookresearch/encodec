@@ -26,7 +26,7 @@ MODELS = {
 
 
 def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
-                     use_lm: bool = True):
+                     use_lm: bool = True, overlap = None):
     """Compress a waveform to a file-object using the given model.
 
     Args:
@@ -47,6 +47,8 @@ def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
     if use_lm:
         lm = model.get_lm_model()
 
+    if overlap:
+        model.overlap = overlap
     with torch.no_grad():
         frames = model.encode(wav[None])
 
@@ -58,7 +60,7 @@ def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
     }
     binary.write_ecdc_header(fo, metadata)
 
-    for (frame, scale) in frames:
+    for (frame, scale, emb) in frames:
         if scale is not None:
             fo.write(struct.pack('!f', scale.cpu().item()))
         _, K, T = frame.shape
@@ -87,6 +89,8 @@ def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
             coder.flush()
         else:
             packer.flush()
+
+    return frames
 
 
 def decompress_from_file(fo: tp.IO[bytes], device='cpu') -> tp.Tuple[torch.Tensor, int]:
@@ -151,12 +155,16 @@ def decompress_from_file(fo: tp.IO[bytes], device='cpu') -> tp.Tuple[torch.Tenso
             if use_lm:
                 input_ = 1 + frame[:, :, t: t + 1]
         frames.append((frame, scale))
+    #print("lf", len(frames))
     with torch.no_grad():
-        wav = model.decode(frames)
-    return wav[0, :, :audio_length], model.sample_rate
+        #for f in frames:
+        #    #print(len(f))
+        #    #print(f[0].shape, f[1], f[2])
+        wav, emb = model.decode(frames)
+    return wav[0, :, :audio_length], model.sample_rate, emb
 
 
-def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False) -> bytes:
+def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False, get_embeddings=False) -> bytes:
     """Compress a waveform using the given model. Returns the compressed bytes.
 
     Args:
@@ -169,8 +177,16 @@ def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False) -> by
             quite a bit, expect between 20 to 30% of size reduction.
     """
     fo = io.BytesIO()
-    compress_to_file(model, wav, fo, use_lm=use_lm)
-    return fo.getvalue()
+    if get_embeddings:
+        frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=0.9)
+        #frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=0.01)
+    else:
+        frames = compress_to_file(model, wav, fo, use_lm=use_lm)
+    if get_embeddings:
+        embs = torch.cat([f[2].cpu() for f in frames if f[2].shape[2] == 150], dim=0)
+        return embs
+    else:
+        return fo.getvalue()
 
 
 def decompress(compressed: bytes, device='cpu') -> tp.Tuple[torch.Tensor, int]:
@@ -197,9 +213,19 @@ def test():
         for use_lm in [False, True]:
             print(f"Doing {name}, use_lm={use_lm}")
             begin = time.time()
-            res = compress(model, x, use_lm=use_lm)
+            res, emb = compress(model, x, use_lm=use_lm)
+            embs = []
+            for frame in emb:
+                embs.append(frame[2].flatten())
+            embs = torch.cat(embs, dim=0)
             t_comp = time.time() - begin
-            x_dec, _ = decompress(res)
+            x_dec, _, emb2 = decompress(res)
+            embs2 = []
+            for frame in emb2:
+                embs2.append(frame.flatten())
+            embs2 = torch.cat(embs2, dim=0)
+            assert embs.shape == embs2.shape, f"{embs.shape} != {embs2.shape}"
+            print(torch.mean((embs - embs2)**2))
             t_decomp = time.time() - begin - t_comp
             kbps = 8 * len(res) / 1000 / (x.shape[-1] / model.sample_rate)
             print(f"kbps: {kbps:.1f}, time comp: {t_comp:.1f} sec. "
