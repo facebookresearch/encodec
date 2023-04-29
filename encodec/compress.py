@@ -26,7 +26,8 @@ MODELS = {
 
 
 def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
-                     use_lm: bool = True, overlap = None, batch_size = None):
+                     use_lm: bool = True, overlap = None, batch_size = None,
+                     get_embeddings: bool = False):
     """Compress a waveform to a file-object using the given model.
 
     Args:
@@ -54,6 +55,8 @@ def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
             frames = model.encode(wav[None])
         else:
             frames = model.encode_batched(wav[None], batch_size=batch_size)
+    if get_embeddings:
+        return frames
 
     metadata = {
         'm': model.name,                 # model name
@@ -180,7 +183,7 @@ def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False, get_e
             quite a bit, expect between 20 to 30% of size reduction.
     """
     fo = io.BytesIO()
-    frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=overlap, batch_size=batch_size)
+    frames = compress_to_file(model, wav, fo, use_lm=use_lm, overlap=overlap, batch_size=batch_size, get_embeddings=get_embeddings)
     if get_embeddings:
         # Comment this out to get tests to work
         embs = torch.cat([f[2] for f in frames if f[2].shape[2] == 150], dim=0).cpu()
