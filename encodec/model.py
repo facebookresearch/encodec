@@ -185,30 +185,34 @@ class EncodecModel(nn.Module):
         assert stride is not None
         
         encoded_frames: tp.List[EncodedFrame] = []
+        incorrect_length_frames = []
 
-        end_idx = length - (length % (stride * batch_size))
-        for i in range(0, end_idx, stride * batch_size):
+        # Process regular size frames in batches:
+        for i in range(0, length, stride * batch_size):
             batch_start = i
-            batch_end = i + (stride * batch_size)
+            batch_end = min(i + (stride * batch_size), length)
             batch_encoded_frames = []
             
-            for j in range(batch_start, batch_end, stride):
-                offset = j
+            for offset in range(batch_start, batch_end, stride):
                 frame = x[:, :, offset: offset + segment_length]
-                batch_encoded_frames.append(frame)
 
-            batch_x = torch.stack(batch_encoded_frames, dim=1)
-            batch_code_scale_emb = self._encode_frame_batched(batch_x)
+                # Process frames with the correct length in batches
+                if frame.shape[-1] == segment_length:
+                    batch_encoded_frames.append(frame)
+                else:
+                    incorrect_length_frames.append(frame)
 
-            for code_scale_emb in batch_code_scale_emb:
-                encoded_frames.append(code_scale_emb)
+            if batch_encoded_frames:
+                batch_x = torch.stack(batch_encoded_frames, dim=1)
+                batch_code_scale_emb = self._encode_frame_batched(batch_x)
 
-        # Special case handling for remaining frames with non-standard length
-        if end_idx < length:
-            for offset in range(end_idx, length, stride):
-                frame = x[:, :, offset: offset + segment_length]
-                encoded_frames.append(self._encode_frame(frame))
-
+                for code_scale_emb in batch_code_scale_emb:
+                    encoded_frames.append(code_scale_emb)
+            if incorrect_length_frames:
+                for frame in incorrect_length_frames:
+                    encoded_frames.append(self._encode_frame(frame))
+                incorrect_length_frames = []
+        
         return encoded_frames
 
     def _encode_frame_batched(self, x: torch.Tensor) -> tp.List[EncodedFrame]:
