@@ -47,6 +47,12 @@ def get_parser():
         '-f', '--force', action='store_true',
         help='Overwrite output file if it exists.')
     parser.add_argument(
+        '-o', '--overlap', type=float, default=0.01,
+        help='Overlap between frames')
+    parser.add_argument(
+        '--batch_size', type=int, default=None,
+        help='Batch size to use')
+    parser.add_argument(
         '-e', '--encoding', action='store_true',
         help='Save encodings, not compressed RQs.')
     parser.add_argument(
@@ -105,7 +111,7 @@ def main():
             model.to("cuda")
             wav = wav.to("cuda")
         wav = convert_audio(wav, sr, model.sample_rate, model.channels)
-        emb = compress(model, wav, use_lm=args.lm, get_embeddings=True)
+        emb = compress(model, wav, use_lm=args.lm, get_embeddings=True, batch_size=args.batch_size, overlap=args.overlap)
         #print(emb.shape)
         torch.save(emb, args.output)
         #print(time.time() - start)

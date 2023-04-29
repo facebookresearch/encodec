@@ -166,6 +166,78 @@ class EncodecModel(nn.Module):
         # codes is [B, K, T], with T frames, K nb of codebooks.
         return codes, scale, emb
 
+    def encode_batched(self, x: torch.Tensor, batch_size: int) -> tp.List[EncodedFrame]:
+        """Given a tensor x, returns a list of frames containing the discrete encoded codes for x, 
+        along with rescaling factors for each segment, when self.normalize is True. Each frames is a 
+        tuple (codebook, scale), with codebook of shape [B, K, T], with K the number of codebooks.
+        This version processes the frames in batches.
+        """
+        assert x.dim() == 3
+        _, channels, length = x.shape
+        assert channels > 0 and channels <= 2
+        
+        segment_length = self.segment_length
+        if segment_length is None:
+            segment_length = length
+            stride = length
+        else:
+            stride = self.segment_stride  # type: ignore
+        assert stride is not None
+        
+        encoded_frames: tp.List[EncodedFrame] = []
+
+        end_idx = length - (length % (stride * batch_size))
+        for i in range(0, end_idx, stride * batch_size):
+            batch_start = i
+            batch_end = i + (stride * batch_size)
+            batch_encoded_frames = []
+            
+            for j in range(batch_start, batch_end, stride):
+                offset = j
+                frame = x[:, :, offset: offset + segment_length]
+                batch_encoded_frames.append(frame)
+
+            batch_x = torch.stack(batch_encoded_frames, dim=1)
+            batch_code_scale_emb = self._encode_frame_batched(batch_x)
+
+            for code_scale_emb in batch_code_scale_emb:
+                encoded_frames.append(code_scale_emb)
+
+        # Special case handling for remaining frames with non-standard length
+        if end_idx < length:
+            for offset in range(end_idx, length, stride):
+                frame = x[:, :, offset: offset + segment_length]
+                encoded_frames.append(self._encode_frame(frame))
+
+        return encoded_frames
+
+    def _encode_frame_batched(self, x: torch.Tensor) -> tp.List[EncodedFrame]:
+        length = x.shape[-1]
+        duration = length / self.sample_rate
+        assert self.segment is None or duration <= 1e-5 + self.segment
+        
+        if self.normalize:
+            mono = x.mean(dim=2, keepdim=True)
+            volume = mono.pow(2).mean(dim=3, keepdim=True).sqrt()
+            scale = 1e-8 + volume
+            x = x / scale
+            scale = scale.view(x.shape[0], x.shape[1], -1)
+        else:
+            scale = None
+        
+        emb = self.encoder(x.view(-1, x.shape[2], x.shape[3]))
+        codes = self.quantizer.encode(emb, self.frame_rate, self.bandwidth)
+        codes = codes.transpose(0, 1)  # codes is [B, K, T], with T frames, K nb of codebooks.
+        
+        # Unflatten the batch dimension
+        codes = codes.view(x.shape[0], x.shape[1], codes.shape[1], codes.shape[2])
+        emb = emb.view(x.shape[0], x.shape[1], emb.shape[1], emb.shape[2])
+        
+        combined = zip(codes, scale, emb)
+        encoded_frames = [(code, s, e) for code, s, e in combined]
+
+        return encoded_frames
+
     def decode(self, encoded_frames: tp.List[EncodedFrame]) -> torch.Tensor:
         """Decode the given frames into a waveform.
         Note that the output might be a bit bigger than the input. In that case,
