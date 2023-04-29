@@ -6,6 +6,7 @@
 
 """EnCodec model implementation."""
 
+import time
 import math
 from pathlib import Path
 import typing as tp
@@ -143,7 +144,9 @@ class EncodecModel(nn.Module):
         #for offset in tqdm(list(range(0, length, stride))):
         for offset in list(range(0, length, stride)):
             frame = x[:, :, offset: offset + segment_length]
-            encoded_frames.append(self._encode_frame(frame))
+            enc = self._encode_frame(frame)
+            #print("e", enc[0].shape, enc[2].shape)
+            encoded_frames.append(enc)
         return encoded_frames
 
     def _encode_frame(self, x: torch.Tensor) -> EncodedFrame:
@@ -184,7 +187,7 @@ class EncodecModel(nn.Module):
             stride = self.segment_stride  # type: ignore
         assert stride is not None
         
-        encoded_frames: tp.List[EncodedFrame] = []
+        encoded_framess = []
         incorrect_length_frames = []
 
         # Process regular size frames in batches:
@@ -199,21 +202,34 @@ class EncodecModel(nn.Module):
                 # Process frames with the correct length in batches
                 if frame.shape[-1] == segment_length:
                     batch_encoded_frames.append(frame)
-                else:
-                    incorrect_length_frames.append(frame)
+                #else:
+                #    incorrect_length_frames.append(frame)
 
             if batch_encoded_frames:
                 batch_x = torch.stack(batch_encoded_frames, dim=1)
                 batch_code_scale_emb = self._encode_frame_batched(batch_x)
+                #print("eb", len(batch_code_scale_emb))
 
-                for code_scale_emb in batch_code_scale_emb:
-                    encoded_frames.append(code_scale_emb)
-            if incorrect_length_frames:
-                for frame in incorrect_length_frames:
-                    encoded_frames.append(self._encode_frame(frame))
-                incorrect_length_frames = []
+                assert batch_code_scale_emb.shape[0] == 1
+                batch_code_scale_emb = batch_code_scale_emb.squeeze(0)
+                #print(batch_code_scale_emb.shape)
+                encoded_framess.append(batch_code_scale_emb)
+#                for code_scale_emb in batch_code_scale_emb:
+#                    assert code_scale_emb[0].shape[0] == code_scale_emb[1].shape[0] == code_scale_emb[2].shape[0]
+#                    for i in range(code_scale_emb[0].shape[0]):
+#                        encoded_frames.append((
+#                            code_scale_emb[0][i:i+1,...],
+#                            code_scale_emb[1][i:i+1,...],
+#                            code_scale_emb[2][i:i+1,...]
+#                        ))
+#            if incorrect_length_frames:
+#                start = time.time()
+#                for frame in incorrect_length_frames:
+#                    encoded_frames.append(self._encode_frame(frame))
+#                incorrect_length_frames = []
+#                print("bad frames", time.time() - start)
         
-        return encoded_frames
+        return torch.cat(encoded_framess, dim=0)
 
     def _encode_frame_batched(self, x: torch.Tensor) -> tp.List[EncodedFrame]:
         length = x.shape[-1]
@@ -230,17 +246,18 @@ class EncodecModel(nn.Module):
             scale = None
         
         emb = self.encoder(x.view(-1, x.shape[2], x.shape[3]))
-        codes = self.quantizer.encode(emb, self.frame_rate, self.bandwidth)
-        codes = codes.transpose(0, 1)  # codes is [B, K, T], with T frames, K nb of codebooks.
+        #codes = self.quantizer.encode(emb, self.frame_rate, self.bandwidth)
+        #codes = codes.transpose(0, 1)  # codes is [B, K, T], with T frames, K nb of codebooks.
         
         # Unflatten the batch dimension
-        codes = codes.view(x.shape[0], x.shape[1], codes.shape[1], codes.shape[2])
+        #codes = codes.view(x.shape[0], x.shape[1], codes.shape[1], codes.shape[2])
         emb = emb.view(x.shape[0], x.shape[1], emb.shape[1], emb.shape[2])
         
-        combined = zip(codes, scale, emb)
-        encoded_frames = [(code, s, e) for code, s, e in combined]
+        #combined = zip(codes, scale, emb)
+        #encoded_frames = [(code, s, e) for code, s, e in combined]
 
-        return encoded_frames
+        #return encoded_frames
+        return emb
 
     def decode(self, encoded_frames: tp.List[EncodedFrame]) -> torch.Tensor:
         """Decode the given frames into a waveform.

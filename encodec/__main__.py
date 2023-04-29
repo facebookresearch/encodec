@@ -105,17 +105,31 @@ def main():
         assert args.bandwidth == 24
         model.set_target_bandwidth(args.bandwidth)
 
-        #start = time.time()
+        emb_start = time.time()
         wav, sr = torchaudio.load(args.input)
         if torch.cuda.is_available():
             model.to("cuda")
             wav = wav.to("cuda")
         wav = convert_audio(wav, sr, model.sample_rate, model.channels)
         emb = compress(model, wav, use_lm=args.lm, get_embeddings=True, batch_size=args.batch_size, overlap=args.overlap)
+        """
+        emb2 = compress(model, wav, use_lm=args.lm, get_embeddings=True, overlap=args.overlap)
+        print(len(emb), len(emb2))
+        assert len(emb) == len(emb2)
+        for e, e2 in zip(emb, emb2):
+            print(e.shape, e2.shape)
+            print((e-e2).mean())
+            print((e-e2).abs().max())
+            assert e.shape == e2.shape
+            assert (e-e2).mean() < 1e-4
+            assert (e-e2).max() < 1e-2
+        """
         #print(emb.shape)
-        torch.save(emb, args.output)
-        #print(time.time() - start)
+        torch.save(emb.cpu(), args.output)
+        #print("emb", time.time() - emb_start)
+        #print("main", time.time() - main_start)
 
+main_start = time.time()
 if __name__ == '__main__':
     main()
 
