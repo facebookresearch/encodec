@@ -9,5 +9,6 @@
 
 __version__ = "0.1.2a3"
 
-from .model import EncodecModel
+from .model import EncodecModel, DiffusionModel
 from .compress import compress, decompress
+from .diffusion import MultiBandWrapper

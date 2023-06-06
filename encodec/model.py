@@ -17,6 +17,12 @@ from torch import nn
 from . import quantization as qt
 from . import modules as m
 from .utils import _check_checksum, _linear_overlap_add, _get_checkpoint_url
+from dataclasses import dataclass
+import torch.nn.functional as F
+
+@dataclass
+class Output:
+    sample: torch.Tensor
 
 
 ROOT_URL = 'https://dl.fbaipublicfiles.com/encodec/v0/'
@@ -299,6 +305,169 @@ class EncodecModel(nn.Module):
             model.load_state_dict(state_dict)
         model.eval()
         return model
+
+class BLSTM(nn.Module):
+    """
+    BiLSTM with same hidden units as input dim.
+    """
+    def __init__(self, dim, layers=2):
+        super().__init__()
+        self.lstm = nn.LSTM(bidirectional=True, num_layers=layers, hidden_size=dim, input_size=dim)
+        self.linear = nn.Linear(2 * dim, dim)
+
+    def forward(self, x):
+        x = x.permute(2, 0, 1)
+        x = self.lstm(x)[0]
+        x = self.linear(x)
+        x = x.permute(1, 2, 0)
+        return x
+
+
+class ResBlock(nn.Module):
+    def __init__(self, channels: int, kernel: int = 3, norm_groups: int = 4,
+                 dilation: int = 1, activation: tp.Type[nn.Module] = nn.ReLU,
+                 dropout: float = 0.):
+        super().__init__()
+        stride = 1
+        padding = dilation * (kernel - stride) // 2
+        Conv = nn.Conv1d
+        Drop = nn.Dropout1d
+        self.norm1 = nn.GroupNorm(norm_groups, channels)
+        self.conv1 = Conv(channels, channels, kernel, 1, padding, dilation=dilation)
+        self.activation1 = activation()
+        self.dropout1 = Drop(dropout)
+
+        self.norm2 = nn.GroupNorm(norm_groups, channels)
+        self.conv2 = Conv(channels, channels, kernel, 1, padding, dilation=dilation)
+        self.activation2 = activation()
+        self.dropout2 = Drop(dropout)
+
+    def forward(self, x):
+        h = self.dropout1(self.conv1(self.activation1(self.norm1(x))))
+        h = self.dropout2(self.conv2(self.activation2(self.norm2(h))))
+        return x + h
+
+
+class DecoderLayer(nn.Module):
+    def __init__(self, chin: int, chout: int, kernel: int = 4, stride: int = 2,
+                 norm_groups: int = 4, res_blocks: int = 1, activation: tp.Type[nn.Module] = nn.ReLU,
+                 dropout: float = 0.):
+        super().__init__()
+        padding = (kernel - stride) // 2
+        self.res_blocks = nn.Sequential(
+            *[ResBlock(chin, norm_groups=norm_groups, dilation=2**idx, dropout=dropout)
+              for idx in range(res_blocks)])
+        self.norm = nn.GroupNorm(norm_groups, chin)
+        ConvTr = nn.ConvTranspose1d
+        self.convtr = ConvTr(chin, chout, kernel, stride, padding, bias=False)
+        self.activation = activation()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.res_blocks(x)
+        x = self.norm(x)
+        x = self.activation(x)
+        x = self.convtr(x)
+        return x
+
+
+class EncoderLayer(nn.Module):
+    def __init__(self, chin: int, chout: int, kernel: int = 4, stride: int = 2,
+                 norm_groups: int = 4, res_blocks: int = 1, activation: tp.Type[nn.Module] = nn.ReLU,
+                 dropout: float = 0.):
+        super().__init__()
+        padding = (kernel - stride) // 2
+        Conv = nn.Conv1d
+        self.conv = Conv(chin, chout, kernel, stride, padding, bias=False)
+        self.norm = nn.GroupNorm(norm_groups, chout)
+        self.activation = activation()
+        self.res_blocks = nn.Sequential(
+            *[ResBlock(chout, norm_groups=norm_groups, dilation=2**idx, dropout=dropout)
+              for idx in range(res_blocks)])
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+
+        B, C, T = x.shape
+        stride, = self.conv.stride
+        pad = (stride - (T % stride)) % stride
+        x = F.pad(x, (0, pad))
+
+        x = self.conv(x)
+        x = self.norm(x)
+        x = self.activation(x)
+        x = self.res_blocks(x)
+        return x
+
+
+class DiffusionModel(nn.Module):
+    """Diffusion model. Diffusion model used in From Disrete Tokens to High Fidelity \
+        Audio with Multi Band Diffusion Models"""
+    def __init__(self, chin: int = 3, hidden: int = 24, depth: int = 3, growth: float = 2.,
+                 max_channels: int = 10_000, num_steps: int = 1000, emb_all_layers=False, bilstm: bool = False,
+                 codec_dim: tp.Optional[int] = None, **kwargs):
+        super().__init__()
+        init_hidden = hidden
+        self.encoders = nn.ModuleList()
+        self.decoders = nn.ModuleList()
+        self.embeddings: tp.Optional[nn.ModuleList] = None
+        self.embedding = nn.Embedding(num_steps, hidden)
+        if emb_all_layers:
+            self.embeddings = nn.ModuleList()
+        self.condition_embedding: tp.Optional[nn.Module] = None
+        for d in range(depth):
+            encoder = EncoderLayer(chin, hidden, **kwargs)
+            decoder = DecoderLayer(hidden, chin, **kwargs)
+            self.encoders.append(encoder)
+            self.decoders.insert(0, decoder)
+            if emb_all_layers and d > 0:
+                assert self.embeddings is not None
+                self.embeddings.append(nn.Embedding(num_steps, hidden))
+            chin = hidden
+            hidden = min(int(chin * growth), max_channels)
+        self.bilstm: tp.Optional[nn.Module]
+        if bilstm:
+            self.bilstm = BLSTM(chin)
+        else:
+            self.bilstm = None
+        self.conv_codec = nn.Conv1d(codec_dim, chin, 1)
+
+    def forward(self, x: torch.Tensor, step: tp.Union[int, torch.Tensor], condition: tp.Optional[torch.Tensor] = None):
+        skips = []
+        bs = x.size(0)
+        z = x
+        view_args = [1]
+        if type(step) is int:
+            step_tensor = torch.tensor([step], device=x.device, dtype=torch.long).expand(bs)
+        else:
+            step_tensor = step
+        for idx, encoder in enumerate(self.encoders):
+            z = encoder(z)
+            if idx == 0:
+                z = z + self.embedding(step_tensor).view(bs, -1, *view_args).expand_as(z)
+            elif self.embeddings is not None:
+                z = z + self.embeddings[idx - 1](step_tensor).view(bs, -1, *view_args).expand_as(z)
+
+            skips.append(z)
+
+        assert condition is not None, "Model defined for conditionnal generation"
+
+        condition_emb = self.conv_codec(condition)  # reshape to the bottleneck dim
+        assert condition_emb.size(-1) <= 2 * z.size(-1), f"You are downsampling the conditionning with factor of at least 2 : {condition_emb.size(-1)=} and {z.size(-1)=}"
+        condition_emb = torch.nn.functional.interpolate(condition_emb, z.size(-1))
+        assert z.size() == condition_emb.size()
+        z += condition_emb
+
+        if self.bilstm is None:
+            z = torch.zeros_like(z)
+        else:
+            z = self.bilstm(z)
+
+        for decoder in self.decoders:
+            s = skips.pop(-1)
+            z = z[:, :, :s.shape[2]]
+            z = z + s
+            z = decoder(z)
+        z = z[:, :, :x.shape[2]]
+        return Output(z)
 
 
 def test():
