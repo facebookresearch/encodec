@@ -47,7 +47,7 @@ setup(
     extras_require={
         'dev': ['flake8', 'mypy', 'pdoc3'],
     },
-    install_requires=['numpy', 'torch', 'torchaudio', 'einops'],
+    install_requires=['numpy', 'torch', 'torchaudio', 'einops', 'julius', 'omegaconf'],
     include_package_data=True,
     entry_points={
         'console_scripts': ['encodec=encodec.__main__:main'],

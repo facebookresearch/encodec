@@ -3,6 +3,8 @@ import torch.nn as nn
 import julius
 from . import EncodecModel, DiffusionModel
 import typing as tp
+import omegaconf
+import os
 
 def get_processor(cfg, sample_rate: int = 24000):
     if cfg.use:
@@ -114,13 +116,13 @@ class MultiBandProcessor(SampleProcessor):
         return bands.sum(dim=0)
 
 
-def betas_from_alpha_bar(alpha_bar):
+def betas_from_alpha_bar(alpha_bar: torch.Tensor):
     alphas = torch.cat([torch.Tensor([alpha_bar[0]]), alpha_bar[1:]/alpha_bar[:-1]])
     return 1 - alphas
 
 class DiffusionProcess:
     """Sampling for a diffusion Model"""
-    def __init__(self, model, sample_processor, device, num_steps, beta_t0, beta_t1, beta_exp) -> None:
+    def __init__(self, model: DiffusionModel, sample_processor: SampleProcessor, device, num_steps: int, beta_t0: float, beta_t1: float, beta_exp: float) -> None:
         self.model = model
         self.num_steps = num_steps
         self.betas = torch.linspace(beta_t0 ** (1 / beta_exp), beta_t1 ** (1 / beta_exp), num_steps,
@@ -168,30 +170,40 @@ class DiffusionProcess:
                 iterates.append(previous.cpu())
         return self.sample_processor.return_sample(previous)
 
-class MultiBandWrapper:
+class MultiBandDiffusion:
     """sample from multiple diffusion models"""
-    def __init__(self, bw=3.0, device=None) -> None:
-        if device is not None:
-            self.device = device
-        else:
-            self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
+    def __init__(self, DPs, codec_model) -> None:
+        self.DPs = DPs
+        self.codec_model = codec_model
+        self.device = next(self.codec_model.parameters()).device
+    
+    @staticmethod
+    def get_mbd_24khz(bw: float = 3.0, pretrained: bool = True, device=None):
+        if device is None:
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
         assert bw in [1.5, 3.0, 6.0], "bandwidth not available"
-        path = {1.5: "/checkpoint/robinsr/checkpoint_1kbps.pt", 3.0: "/checkpoint/robinsr/checkpoint_3kbps.pt", 6.0: "/checkpoint/robinsr/checkpoint_6kbps.pt"}[bw]
+        dirname = os.path.dirname(__file__)
+        path = {1.5: os.path.join(dirname, "diffusion_configs/1.5kbps.yaml"),
+                3.0: os.path.join(dirname, "diffusion_configs/3kbps.yaml"),
+                6.0: os.path.join(dirname, "diffusion_configs/3kbps.yaml")}[bw]
         codec_model = EncodecModel.encodec_model_24khz()
         codec_model.set_target_bandwidth(bw)
-        self.codec_model = codec_model.to(self.device)
-        ckpts = torch.load(path)
+        codec_model = codec_model.to(device)
+        cfg = omegaconf.OmegaConf.load(path)
         DPs = []
-        for ckpt in ckpts:
-            model = DiffusionModel(chin=1, **ckpt['cfg_model'])
-            model.load_state_dict(ckpt['model_state'])
-            model = model.to(self.device)
-            processor = get_processor(ckpt['cfg_processor'])
-            processor.load_state_dict(ckpt['processor_state'])
-            processor = processor.to(self.device)
-            DPs.append(DiffusionProcess(model=model, sample_processor=processor, device=self.device, **ckpt['cfg_diffusion']))
-        self.DPs = DPs
+        for i in range(cfg.n_bands):
+            band_cfg = getattr(cfg, f'band_{i}')
+            model = DiffusionModel(chin=1, **band_cfg.myunet)
+            processor = get_processor(band_cfg.processor)
+            if pretrained:
+                model_state = torch.hub.load_state_dict_from_url(band_cfg.model_url, map_location='cpu', check_hash=True)
+                model.load_state_dict(model_state)
+                processor_state = torch.hub.load_state_dict_from_url(band_cfg.processor_url, map_location='cpu', check_hash=True)
+                processor.load_state_dict(processor_state)
+            model = model.to(device)
+            processor = processor.to(device)
+            DPs.append(DiffusionProcess(model=model, sample_processor=processor, device=device, **band_cfg.diffusion))
+        return MultiBandDiffusion(DPs, codec_model)
 
     @torch.no_grad()
     def get_condition(self, wav: torch.Tensor, no_resampling=False) -> torch.Tensor:
@@ -201,16 +213,16 @@ class MultiBandWrapper:
         emb = self.codec_model.quantizer.decode(quantized)
         return emb
 
-    def generate(self, emb, size: tp.Optional[torch.Size] = None, step_list=None):
+    def generate(self, emb: torch.Tensor, size: tp.Optional[torch.Size] = None, step_list=None):
         if size is None:
-            size = torch.Size([emb.size(0), 1, emb.size(1)])
+            size = torch.Size([emb.size(0), 1, emb.size(-1) * 320])
         assert size[0] == emb.size(0)
         out = torch.zeros(size).to(self.device)
         for DP in self.DPs:
             out += DP.generate_subsampled(condition=emb, step_list=step_list, initial=torch.randn_like(out))
         return out
 
-    def regenerate(self, wav):
+    def regenerate(self, wav: torch.Tensor):
         emb = self.get_condition(wav)
         size = wav.size()
         return self.generate(emb, size=size)
@@ -220,6 +232,6 @@ if __name__ == '__main__':
     import soundfile as sf
     wav, sr = sf.read('../out_test_24k.wav')
     wav_torch = torch.from_numpy(wav).float().cuda().view(1, 1, -1)
-    Generator = MultiBandWrapper()
+    Generator = MultiBandDiffusion()
     out = Generator.regenerate(wav_torch)
     sf.write('../out_test_24k.wav', out.cpu().numpy().squeeze(0).squeeze(0), samplerate=sr)
