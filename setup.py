@@ -44,6 +44,9 @@ setup(
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=['encodec', 'encodec.quantization', 'encodec.modules'],
+    package_data={
+        'encodec': ['encodec/diffusion_configs/*.yaml']
+    },
     extras_require={
         'dev': ['flake8', 'mypy', 'pdoc3'],
     },
