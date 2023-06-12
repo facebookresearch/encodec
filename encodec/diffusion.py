@@ -193,9 +193,9 @@ class MultiBandDiffusion:
             model = DiffusionModel(chin=1, **band_cfg.myunet)
             processor = get_processor(band_cfg.processor)
             if pretrained:
-                model_state = torch.hub.load_state_dict_from_url(band_cfg.model_url, map_location='cpu', check_hash=True)
+                model_state = torch.hub.load_state_dict_from_url(band_cfg.model_url, map_location=device, check_hash=True)
                 model.load_state_dict(model_state)
-                processor_state = torch.hub.load_state_dict_from_url(band_cfg.processor_url, map_location='cpu', check_hash=True)
+                processor_state = torch.hub.load_state_dict_from_url(band_cfg.processor_url, map_location=device, check_hash=True)
                 processor.load_state_dict(processor_state)
             model = model.to(device)
             processor = processor.to(device)
