@@ -7,3 +7,4 @@ include encodec/py.typed
 exclude *.wav
 include test_24k.wav
 include test_48k.wav
+include encodec/diffusion_configs/*yaml
