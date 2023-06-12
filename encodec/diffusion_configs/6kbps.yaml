@@ -1,0 +1,110 @@
+
+n_bands: 4
+band_0:
+  myunet:
+    hidden: 48
+    depth: 4
+    res_blocks: 2
+    norm_groups: 4
+    kernel: 8
+    stride: 4
+    growth: 4
+    max_channels: 10000
+    dropout: 0.0
+    emb_all_layers: true
+    bilstm: false
+    codec_dim: 128
+  model_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/model_0.pt
+  processor:
+    name: MultiBandProcessor
+    use: false
+    n_bands: 8
+    num_samples: 10000
+    power_std: 0.4
+  processor_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/processor_0.pt
+  diffusion:
+    num_steps: 1000
+    beta_t0: 1e-05
+    beta_t1: 0.029
+    beta_exp: 7.5
+band_1:
+  myunet:
+    hidden: 48
+    depth: 4
+    res_blocks: 2
+    norm_groups: 4
+    kernel: 8
+    stride: 4
+    growth: 4
+    max_channels: 10000
+    dropout: 0.0
+    emb_all_layers: true
+    bilstm: false
+    codec_dim: 128
+  model_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/model_1.pt
+  processor:
+    name: MultiBandProcessor
+    use: false
+    n_bands: 8
+    num_samples: 10000
+    power_std: 0.4
+  processor_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/processor_1.pt
+  diffusion:
+    num_steps: 1000
+    beta_t0: 1e-05
+    beta_t1: 0.029
+    beta_exp: 7.5
+band_2:
+  myunet:
+    hidden: 48
+    depth: 4
+    res_blocks: 2
+    norm_groups: 4
+    kernel: 8
+    stride: 4
+    growth: 4
+    max_channels: 10000
+    dropout: 0.0
+    emb_all_layers: true
+    bilstm: false
+    codec_dim: 128
+  model_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/model_2.pt
+  processor:
+    name: MultiBandProcessor
+    use: true
+    n_bands: 8
+    num_samples: 10000
+    power_std: 0.4
+  processor_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/processor_2.pt
+  diffusion:
+    num_steps: 1000
+    beta_t0: 1e-05
+    beta_t1: 0.029
+    beta_exp: 7.5
+band_3:
+  myunet:
+    hidden: 48
+    depth: 4
+    res_blocks: 2
+    norm_groups: 4
+    kernel: 8
+    stride: 4
+    growth: 4
+    max_channels: 10000
+    dropout: 0.0
+    emb_all_layers: true
+    bilstm: false
+    codec_dim: 128
+  model_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/model_3.pt
+  processor:
+    name: MultiBandProcessor
+    use: true
+    n_bands: 8
+    num_samples: 10000
+    power_std: 0.75
+  processor_url: https://dl.fbaipublicfiles.com/encodec/Diffusion/6kbps/processor_3.pt
+  diffusion:
+    num_steps: 1000
+    beta_t0: 1e-05
+    beta_t1: 0.029
+    beta_exp: 7.5

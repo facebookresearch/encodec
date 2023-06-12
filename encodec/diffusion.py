@@ -148,7 +148,6 @@ class DiffusionProcess:
         alpha_bars_subsampled = (1 - self.betas).cumprod(dim=0)[list(reversed(step_list))].cpu()
         betas_subsampled = betas_from_alpha_bar(alpha_bars_subsampled)
         current = initial
-        iterates = [current]
         for idx, step in enumerate(step_list[:-1]):
             with torch.no_grad():
                 estimate = self.model(current, step, condition=condition).sample 
@@ -166,8 +165,6 @@ class DiffusionProcess:
             alpha_bar = previous_alpha_bar
             if step == 0:
                 previous *= self.rescale
-            if return_list:
-                iterates.append(previous.cpu())
         return self.sample_processor.return_sample(previous)
 
 class MultiBandDiffusion:
