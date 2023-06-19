@@ -20,6 +20,7 @@ from .utils import _check_checksum, _linear_overlap_add, _get_checkpoint_url
 from dataclasses import dataclass
 import torch.nn.functional as F
 
+
 @dataclass
 class Output:
     sample: torch.Tensor
