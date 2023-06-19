@@ -306,6 +306,7 @@ class EncodecModel(nn.Module):
         model.eval()
         return model
 
+
 class BLSTM(nn.Module):
     """
     BiLSTM with same hidden units as input dim.
@@ -405,7 +406,6 @@ class DiffusionModel(nn.Module):
                  max_channels: int = 10_000, num_steps: int = 1000, emb_all_layers=False, bilstm: bool = False,
                  codec_dim: tp.Optional[int] = None, **kwargs):
         super().__init__()
-        init_hidden = hidden
         self.encoders = nn.ModuleList()
         self.decoders = nn.ModuleList()
         self.embeddings: tp.Optional[nn.ModuleList] = None
@@ -451,7 +451,8 @@ class DiffusionModel(nn.Module):
         assert condition is not None, "Model defined for conditionnal generation"
 
         condition_emb = self.conv_codec(condition)  # reshape to the bottleneck dim
-        assert condition_emb.size(-1) <= 2 * z.size(-1), f"You are downsampling the conditionning with factor of at least 2 : {condition_emb.size(-1)=} and {z.size(-1)=}"
+        assert condition_emb.size(-1) <= 2 * z.size(-1), \
+            f"You are downsampling the conditionning with factor <=2 : {condition_emb.size(-1)=} and {z.size(-1)=}"
         condition_emb = torch.nn.functional.interpolate(condition_emb, z.size(-1))
         assert z.size() == condition_emb.size()
         z += condition_emb

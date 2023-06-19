@@ -1,10 +1,10 @@
 import torch
-import torch.nn as nn
 import julius
 from . import EncodecModel, DiffusionModel
 import typing as tp
 import omegaconf
 import os
+
 
 def get_processor(cfg, sample_rate: int = 24000):
     if cfg.use:
@@ -16,16 +16,6 @@ def get_processor(cfg, sample_rate: int = 24000):
         sample_processor = SampleProcessor()
     return sample_processor
 
-class SampleProcessor(torch.nn.Module):
-    def project_sample(self, x: torch.Tensor, ref_audio: tp.Optional[torch.Tensor] = None):
-        """Project the original sample to the 'space' where
-        the diffusion will happen."""
-        return x
-
-    def return_sample(self, z: torch.Tensor, ref_audio: tp.Optional[torch.Tensor] = None):
-        """Project back from diffusion space to the actual sample space.
-        """
-        return z
 
 class SampleProcessor(torch.nn.Module):
     def project_sample(self, x: torch.Tensor, ref_audio: tp.Optional[torch.Tensor] = None):
@@ -120,28 +110,31 @@ def betas_from_alpha_bar(alpha_bar: torch.Tensor):
     alphas = torch.cat([torch.Tensor([alpha_bar[0]]), alpha_bar[1:]/alpha_bar[:-1]])
     return 1 - alphas
 
+
 class DiffusionProcess:
     """Sampling for a diffusion Model"""
-    def __init__(self, model: DiffusionModel, sample_processor: SampleProcessor, device, num_steps: int, beta_t0: float, beta_t1: float, beta_exp: float) -> None:
+    def __init__(self, model: DiffusionModel, sample_processor: SampleProcessor, device, num_steps: int, beta_t0: float,
+                 beta_t1: float, beta_exp: float) -> None:
         self.model = model
         self.num_steps = num_steps
         self.betas = torch.linspace(beta_t0 ** (1 / beta_exp), beta_t1 ** (1 / beta_exp), num_steps,
-                                        device=device, dtype=torch.float) ** beta_exp
+                                    device=device, dtype=torch.float) ** beta_exp
         self.sample_processor = sample_processor
-        
+
     def get_alpha_bar(self, step: tp.Optional[tp.Union[int, torch.Tensor]] = None) -> torch.Tensor:
         """Return 'alpha_bar', either for a given step, or as a tensor
         with its value for each step.
         """
         if step is None:
-            return (1 - self.betas).cumprod(dim=-1) # works for simgle and multi bands
+            return (1 - self.betas).cumprod(dim=-1)  # works for simgle and multi bands
         if type(step) is int:
             return (1 - self.betas[:step + 1]).prod()
         else:
             return (1 - self.betas).cumprod(dim=0)[step].view(-1, 1, 1)
 
     @torch.no_grad()
-    def generate_subsampled(self, condition: torch.Tensor, step_list: tp.Optional[list] = None, initial: tp.Optional[torch.Tensor] = None, return_list: bool = False,):
+    def generate_subsampled(self, condition: torch.Tensor, step_list: tp.Optional[list] = None,
+                            initial: tp.Optional[torch.Tensor] = None, return_list: bool = False,):
         if step_list is None:
             step_list = list(range(1000))[::-50] + [0]
         alpha_bar = self.get_alpha_bar(step=self.num_steps - 1)
@@ -150,7 +143,7 @@ class DiffusionProcess:
         current = initial
         for idx, step in enumerate(step_list[:-1]):
             with torch.no_grad():
-                estimate = self.model(current, step, condition=condition).sample 
+                estimate = self.model(current, step, condition=condition).sample
             alpha = 1 - betas_subsampled[-1 - idx]
             previous = (current - (1 - alpha) / (1 - alpha_bar).sqrt() * estimate) / alpha.sqrt()
             previous_alpha_bar = self.get_alpha_bar(step_list[idx + 1])
@@ -167,13 +160,14 @@ class DiffusionProcess:
                 previous *= self.rescale
         return self.sample_processor.return_sample(previous)
 
+
 class MultiBandDiffusion:
     """sample from multiple diffusion models"""
     def __init__(self, DPs, codec_model) -> None:
         self.DPs = DPs
         self.codec_model = codec_model
         self.device = next(self.codec_model.parameters()).device
-    
+
     @staticmethod
     def get_mbd_24khz(bw: float = 3.0, pretrained: bool = True, device=None):
         if device is None:
@@ -193,9 +187,11 @@ class MultiBandDiffusion:
             model = DiffusionModel(chin=1, **band_cfg.myunet)
             processor = get_processor(band_cfg.processor)
             if pretrained:
-                model_state = torch.hub.load_state_dict_from_url(band_cfg.model_url, map_location=device, check_hash=True)
+                model_state = torch.hub.load_state_dict_from_url(band_cfg.model_url, map_location=device,
+                                                                 check_hash=True)
                 model.load_state_dict(model_state)
-                processor_state = torch.hub.load_state_dict_from_url(band_cfg.processor_url, map_location=device, check_hash=True)
+                processor_state = torch.hub.load_state_dict_from_url(band_cfg.processor_url, map_location=device,
+                                                                     check_hash=True)
                 processor.load_state_dict(processor_state)
             model = model.to(device)
             processor = processor.to(device)
