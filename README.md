@@ -33,6 +33,11 @@ entropy coding, by clicking the thumbnail (original tracks provided by [Lucille 
 <img src="./thumbnail.png" alt="Thumbnail for the sample video.
 	You will first here the ground truth, then ~3kbps, then 12kbps, for two songs."></a></p>
 
+## 🤗 Transformers
+
+Encodec has been added to Transformers. For more information, please refer to [Transformers' Encodec docs](https://huggingface.co/docs/transformers/main/en/model_doc/encodec).
+
+You can find both the [24KHz](https://huggingface.co/facebook/encodec_24khz) and [48KHz](https://huggingface.co/facebook/encodec_48khz) checkpoints on the 🤗 Hub.
 
 ## What's up?
 
