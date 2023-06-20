@@ -39,13 +39,13 @@ Encodec has been added to Transformers. For more information, please refer to [T
 
 You can find both the [24KHz](https://huggingface.co/facebook/encodec_24khz) and [48KHz](https://huggingface.co/facebook/encodec_48khz) checkpoints on the 🤗 Hub.
 
-### Usage
-
-You can use Encodec at scale with massive datasets with less than 10 lines of code! ⚡️
+Using 🤗 Transformers, you can use Encodec at scale along with all the other supported model and datasets. ⚡️
+Alternatively you can also directly use the encodec package, as detailed in the Usage section. 
 
 Set up your development environment!
 ```
-pip install datasets pip install git+https://github.com/huggingface/transformers.git@main
+pip install -U datasets 
+pip install git+https://github.com/huggingface/transformers.git@main
 ```
 
 Embed your datasets at scale!
