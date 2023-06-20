@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>encodec.model API documentation</title>
+<meta name="description" content="EnCodec model implementation." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>encodec.model</code></h1>
+</header>
+<section id="section-intro">
+<p>EnCodec model implementation.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
+&#34;&#34;&#34;EnCodec model implementation.&#34;&#34;&#34;
+
+import math
+from pathlib import Path
+import typing as tp
+
+import numpy as np
+import torch
+from torch import nn
+
+from . import quantization as qt
+from . import modules as m
+from .utils import _check_checksum, _linear_overlap_add, _get_checkpoint_url
+
+
+ROOT_URL = &#39;https://dl.fbaipublicfiles.com/encodec/v0/&#39;
+
+EncodedFrame = tp.Tuple[torch.Tensor, tp.Optional[torch.Tensor]]
+
+
+class LMModel(nn.Module):
+    &#34;&#34;&#34;Language Model to estimate probabilities of each codebook entry.
+    We predict all codebooks in parallel for a given time step.
+
+    Args:
+        n_q (int): number of codebooks.
+        card (int): codebook cardinality.
+        dim (int): transformer dimension.
+        **kwargs: passed to `encodec.modules.transformer.StreamingTransformerEncoder`.
+    &#34;&#34;&#34;
+    def __init__(self, n_q: int = 32, card: int = 1024, dim: int = 200, **kwargs):
+        super().__init__()
+        self.card = card
+        self.n_q = n_q
+        self.dim = dim
+        self.transformer = m.StreamingTransformerEncoder(dim=dim, **kwargs)
+        self.emb = nn.ModuleList([nn.Embedding(card + 1, dim) for _ in range(n_q)])
+        self.linears = nn.ModuleList([nn.Linear(dim, card) for _ in range(n_q)])
+
+    def forward(self, indices: torch.Tensor,
+                states: tp.Optional[tp.List[torch.Tensor]] = None, offset: int = 0):
+        &#34;&#34;&#34;
+        Args:
+            indices (torch.Tensor): indices from the previous time step. Indices
+                should be 1 + actual index in the codebook. The value 0 is reserved for
+                when the index is missing (i.e. first time step). Shape should be
+                `[B, n_q, T]`.
+            states: state for the streaming decoding.
+            offset: offset of the current time step.
+
+        Returns a 3-tuple `(probabilities, new_states, new_offset)` with probabilities
+        with a shape `[B, card, n_q, T]`.
+
+        &#34;&#34;&#34;
+        B, K, T = indices.shape
+        input_ = sum([self.emb[k](indices[:, k]) for k in range(K)])
+        out, states, offset = self.transformer(input_, states, offset)
+        logits = torch.stack([self.linears[k](out) for k in range(K)], dim=1).permute(0, 3, 1, 2)
+        return torch.softmax(logits, dim=1), states, offset
+
+
+class EncodecModel(nn.Module):
+    &#34;&#34;&#34;EnCodec model operating on the raw waveform.
+    Args:
+        target_bandwidths (list of float): Target bandwidths.
+        encoder (nn.Module): Encoder network.
+        decoder (nn.Module): Decoder network.
+        sample_rate (int): Audio sample rate.
+        channels (int): Number of audio channels.
+        normalize (bool): Whether to apply audio normalization.
+        segment (float or None): segment duration in sec. when doing overlap-add.
+        overlap (float): overlap between segment, given as a fraction of the segment duration.
+        name (str): name of the model, used as metadata when compressing audio.
+    &#34;&#34;&#34;
+    def __init__(self,
+                 encoder: m.SEANetEncoder,
+                 decoder: m.SEANetDecoder,
+                 quantizer: qt.ResidualVectorQuantizer,
+                 target_bandwidths: tp.List[float],
+                 sample_rate: int,
+                 channels: int,
+                 normalize: bool = False,
+                 segment: tp.Optional[float] = None,
+                 overlap: float = 0.01,
+                 name: str = &#39;unset&#39;):
+        super().__init__()
+        self.bandwidth: tp.Optional[float] = None
+        self.target_bandwidths = target_bandwidths
+        self.encoder = encoder
+        self.quantizer = quantizer
+        self.decoder = decoder
+        self.sample_rate = sample_rate
+        self.channels = channels
+        self.normalize = normalize
+        self.segment = segment
+        self.overlap = overlap
+        self.frame_rate = math.ceil(self.sample_rate / np.prod(self.encoder.ratios))
+        self.name = name
+        self.bits_per_codebook = int(math.log2(self.quantizer.bins))
+        assert 2 ** self.bits_per_codebook == self.quantizer.bins, \
+            &#34;quantizer bins must be a power of 2.&#34;
+
+    @property
+    def segment_length(self) -&gt; tp.Optional[int]:
+        if self.segment is None:
+            return None
+        return int(self.segment * self.sample_rate)
+
+    @property
+    def segment_stride(self) -&gt; tp.Optional[int]:
+        segment_length = self.segment_length
+        if segment_length is None:
+            return None
+        return max(1, int((1 - self.overlap) * segment_length))
+
+    def encode(self, x: torch.Tensor) -&gt; tp.List[EncodedFrame]:
+        &#34;&#34;&#34;Given a tensor `x`, returns a list of frames containing
+        the discrete encoded codes for `x`, along with rescaling factors
+        for each segment, when `self.normalize` is True.
+
+        Each frames is a tuple `(codebook, scale)`, with `codebook` of
+        shape `[B, K, T]`, with `K` the number of codebooks.
+        &#34;&#34;&#34;
+        assert x.dim() == 3
+        _, channels, length = x.shape
+        assert channels &gt; 0 and channels &lt;= 2
+        segment_length = self.segment_length
+        if segment_length is None:
+            segment_length = length
+            stride = length
+        else:
+            stride = self.segment_stride  # type: ignore
+            assert stride is not None
+
+        encoded_frames: tp.List[EncodedFrame] = []
+        for offset in range(0, length, stride):
+            frame = x[:, :, offset: offset + segment_length]
+            encoded_frames.append(self._encode_frame(frame))
+        return encoded_frames
+
+    def _encode_frame(self, x: torch.Tensor) -&gt; EncodedFrame:
+        length = x.shape[-1]
+        duration = length / self.sample_rate
+        assert self.segment is None or duration &lt;= 1e-5 + self.segment
+
+        if self.normalize:
+            mono = x.mean(dim=1, keepdim=True)
+            volume = mono.pow(2).mean(dim=2, keepdim=True).sqrt()
+            scale = 1e-8 + volume
+            x = x / scale
+            scale = scale.view(-1, 1)
+        else:
+            scale = None
+
+        emb = self.encoder(x)
+        codes = self.quantizer.encode(emb, self.frame_rate, self.bandwidth)
+        codes = codes.transpose(0, 1)
+        # codes is [B, K, T], with T frames, K nb of codebooks.
+        return codes, scale
+
+    def decode(self, encoded_frames: tp.List[EncodedFrame]) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Decode the given frames into a waveform.
+        Note that the output might be a bit bigger than the input. In that case,
+        any extra steps at the end can be trimmed.
+        &#34;&#34;&#34;
+        segment_length = self.segment_length
+        if segment_length is None:
+            assert len(encoded_frames) == 1
+            return self._decode_frame(encoded_frames[0])
+
+        frames = [self._decode_frame(frame) for frame in encoded_frames]
+        return _linear_overlap_add(frames, self.segment_stride or 1)
+
+    def _decode_frame(self, encoded_frame: EncodedFrame) -&gt; torch.Tensor:
+        codes, scale = encoded_frame
+        codes = codes.transpose(0, 1)
+        emb = self.quantizer.decode(codes)
+        out = self.decoder(emb)
+        if scale is not None:
+            out = out * scale.view(-1, 1, 1)
+        return out
+
+    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+        frames = self.encode(x)
+        return self.decode(frames)[:, :, :x.shape[-1]]
+
+    def set_target_bandwidth(self, bandwidth: float):
+        if bandwidth not in self.target_bandwidths:
+            raise ValueError(f&#34;This model doesn&#39;t support the bandwidth {bandwidth}. &#34;
+                             f&#34;Select one of {self.target_bandwidths}.&#34;)
+        self.bandwidth = bandwidth
+
+    def get_lm_model(self) -&gt; LMModel:
+        &#34;&#34;&#34;Return the associated LM model to improve the compression rate.
+        &#34;&#34;&#34;
+        device = next(self.parameters()).device
+        lm = LMModel(self.quantizer.n_q, self.quantizer.bins, num_layers=5, dim=200,
+                     past_context=int(3.5 * self.frame_rate)).to(device)
+        checkpoints = {
+            &#39;encodec_24khz&#39;: &#39;encodec_lm_24khz-1608e3c0.th&#39;,
+            &#39;encodec_48khz&#39;: &#39;encodec_lm_48khz-7add9fc3.th&#39;,
+        }
+        try:
+            checkpoint_name = checkpoints[self.name]
+        except KeyError:
+            raise RuntimeError(&#34;No LM pre-trained for the current Encodec model.&#34;)
+        url = _get_checkpoint_url(ROOT_URL, checkpoint_name)
+        state = torch.hub.load_state_dict_from_url(
+            url, map_location=&#39;cpu&#39;, check_hash=True)  # type: ignore
+        lm.load_state_dict(state)
+        lm.eval()
+        return lm
+
+    @staticmethod
+    def _get_model(target_bandwidths: tp.List[float],
+                   sample_rate: int = 24_000,
+                   channels: int = 1,
+                   causal: bool = True,
+                   model_norm: str = &#39;weight_norm&#39;,
+                   audio_normalize: bool = False,
+                   segment: tp.Optional[float] = None,
+                   name: str = &#39;unset&#39;):
+        encoder = m.SEANetEncoder(channels=channels, norm=model_norm, causal=causal)
+        decoder = m.SEANetDecoder(channels=channels, norm=model_norm, causal=causal)
+        n_q = int(1000 * target_bandwidths[-1] // (math.ceil(sample_rate / encoder.hop_length) * 10))
+        quantizer = qt.ResidualVectorQuantizer(
+            dimension=encoder.dimension,
+            n_q=n_q,
+            bins=1024,
+        )
+        model = EncodecModel(
+            encoder,
+            decoder,
+            quantizer,
+            target_bandwidths,
+            sample_rate,
+            channels,
+            normalize=audio_normalize,
+            segment=segment,
+            name=name,
+        )
+        return model
+
+    @staticmethod
+    def _get_pretrained(checkpoint_name: str, repository: tp.Optional[Path] = None):
+        if repository is not None:
+            if not repository.is_dir():
+                raise ValueError(f&#34;{repository} must exist and be a directory.&#34;)
+            file = repository / checkpoint_name
+            checksum = file.stem.split(&#39;-&#39;)[1]
+            _check_checksum(file, checksum)
+            return torch.load(file)
+        else:
+            url = _get_checkpoint_url(ROOT_URL, checkpoint_name)
+            return torch.hub.load_state_dict_from_url(url, map_location=&#39;cpu&#39;, check_hash=True)  # type:ignore
+
+    @staticmethod
+    def encodec_model_24khz(pretrained: bool = True, repository: tp.Optional[Path] = None):
+        &#34;&#34;&#34;Return the pretrained causal 24khz model.
+        &#34;&#34;&#34;
+        if repository:
+            assert pretrained
+        target_bandwidths = [1.5, 3., 6, 12., 24.]
+        checkpoint_name = &#39;encodec_24khz-d7cc33bc.th&#39;
+        sample_rate = 24_000
+        channels = 1
+        model = EncodecModel._get_model(
+            target_bandwidths, sample_rate, channels,
+            causal=True, model_norm=&#39;weight_norm&#39;, audio_normalize=False,
+            name=&#39;encodec_24khz&#39; if pretrained else &#39;unset&#39;)
+        if pretrained:
+            state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
+            model.load_state_dict(state_dict)
+        model.eval()
+        return model
+
+    @staticmethod
+    def encodec_model_48khz(pretrained: bool = True, repository: tp.Optional[Path] = None):
+        &#34;&#34;&#34;Return the pretrained 48khz model.
+        &#34;&#34;&#34;
+        if repository:
+            assert pretrained
+        target_bandwidths = [3., 6., 12., 24.]
+        checkpoint_name = &#39;encodec_48khz-7e698e3e.th&#39;
+        sample_rate = 48_000
+        channels = 2
+        model = EncodecModel._get_model(
+            target_bandwidths, sample_rate, channels,
+            causal=False, model_norm=&#39;time_group_norm&#39;, audio_normalize=True,
+            segment=1., name=&#39;encodec_48khz&#39; if pretrained else &#39;unset&#39;)
+        if pretrained:
+            state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
+            model.load_state_dict(state_dict)
+        model.eval()
+        return model
+
+
+def test():
+    from itertools import product
+    import torchaudio
+    bandwidths = [3, 6, 12, 24]
+    models = {
+        &#39;encodec_24khz&#39;: EncodecModel.encodec_model_24khz,
+        &#39;encodec_48khz&#39;: EncodecModel.encodec_model_48khz
+    }
+    for model_name, bw in product(models.keys(), bandwidths):
+        model = models[model_name]()
+        model.set_target_bandwidth(bw)
+        audio_suffix = model_name.split(&#39;_&#39;)[1][:3]
+        wav, sr = torchaudio.load(f&#34;test_{audio_suffix}.wav&#34;)
+        wav = wav[:, :model.sample_rate * 2]
+        wav_in = wav.unsqueeze(0)
+        wav_dec = model(wav_in)[0]
+        assert wav.shape == wav_dec.shape, (wav.shape, wav_dec.shape)
+
+
+if __name__ == &#39;__main__&#39;:
+    test()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="encodec.model.test"><code class="name flex">
+<span>def <span class="ident">test</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test():
+    from itertools import product
+    import torchaudio
+    bandwidths = [3, 6, 12, 24]
+    models = {
+        &#39;encodec_24khz&#39;: EncodecModel.encodec_model_24khz,
+        &#39;encodec_48khz&#39;: EncodecModel.encodec_model_48khz
+    }
+    for model_name, bw in product(models.keys(), bandwidths):
+        model = models[model_name]()
+        model.set_target_bandwidth(bw)
+        audio_suffix = model_name.split(&#39;_&#39;)[1][:3]
+        wav, sr = torchaudio.load(f&#34;test_{audio_suffix}.wav&#34;)
+        wav = wav[:, :model.sample_rate * 2]
+        wav_in = wav.unsqueeze(0)
+        wav_dec = model(wav_in)[0]
+        assert wav.shape == wav_dec.shape, (wav.shape, wav_dec.shape)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="encodec.model.EncodecModel"><code class="flex name class">
+<span>class <span class="ident">EncodecModel</span></span>
+<span>(</span><span>encoder: <a title="encodec.modules.seanet.SEANetEncoder" href="modules/seanet.html#encodec.modules.seanet.SEANetEncoder">SEANetEncoder</a>, decoder: <a title="encodec.modules.seanet.SEANetDecoder" href="modules/seanet.html#encodec.modules.seanet.SEANetDecoder">SEANetDecoder</a>, quantizer: <a title="encodec.quantization.vq.ResidualVectorQuantizer" href="quantization/vq.html#encodec.quantization.vq.ResidualVectorQuantizer">ResidualVectorQuantizer</a>, target_bandwidths: List[float], sample_rate: int, channels: int, normalize: bool = False, segment: Optional[float] = None, overlap: float = 0.01, name: str = 'unset')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>EnCodec model operating on the raw waveform.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>target_bandwidths</code></strong> :&ensp;<code>list</code> of <code>float</code></dt>
+<dd>Target bandwidths.</dd>
+<dt><strong><code>encoder</code></strong> :&ensp;<code>nn.Module</code></dt>
+<dd>Encoder network.</dd>
+<dt><strong><code>decoder</code></strong> :&ensp;<code>nn.Module</code></dt>
+<dd>Decoder network.</dd>
+<dt><strong><code>sample_rate</code></strong> :&ensp;<code>int</code></dt>
+<dd>Audio sample rate.</dd>
+<dt><strong><code>channels</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of audio channels.</dd>
+<dt><strong><code>normalize</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to apply audio normalization.</dd>
+<dt><strong><code>segment</code></strong> :&ensp;<code>float</code> or <code>None</code></dt>
+<dd>segment duration in sec. when doing overlap-add.</dd>
+<dt><strong><code>overlap</code></strong> :&ensp;<code>float</code></dt>
+<dd>overlap between segment, given as a fraction of the segment duration.</dd>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the model, used as metadata when compressing audio.</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EncodecModel(nn.Module):
+    &#34;&#34;&#34;EnCodec model operating on the raw waveform.
+    Args:
+        target_bandwidths (list of float): Target bandwidths.
+        encoder (nn.Module): Encoder network.
+        decoder (nn.Module): Decoder network.
+        sample_rate (int): Audio sample rate.
+        channels (int): Number of audio channels.
+        normalize (bool): Whether to apply audio normalization.
+        segment (float or None): segment duration in sec. when doing overlap-add.
+        overlap (float): overlap between segment, given as a fraction of the segment duration.
+        name (str): name of the model, used as metadata when compressing audio.
+    &#34;&#34;&#34;
+    def __init__(self,
+                 encoder: m.SEANetEncoder,
+                 decoder: m.SEANetDecoder,
+                 quantizer: qt.ResidualVectorQuantizer,
+                 target_bandwidths: tp.List[float],
+                 sample_rate: int,
+                 channels: int,
+                 normalize: bool = False,
+                 segment: tp.Optional[float] = None,
+                 overlap: float = 0.01,
+                 name: str = &#39;unset&#39;):
+        super().__init__()
+        self.bandwidth: tp.Optional[float] = None
+        self.target_bandwidths = target_bandwidths
+        self.encoder = encoder
+        self.quantizer = quantizer
+        self.decoder = decoder
+        self.sample_rate = sample_rate
+        self.channels = channels
+        self.normalize = normalize
+        self.segment = segment
+        self.overlap = overlap
+        self.frame_rate = math.ceil(self.sample_rate / np.prod(self.encoder.ratios))
+        self.name = name
+        self.bits_per_codebook = int(math.log2(self.quantizer.bins))
+        assert 2 ** self.bits_per_codebook == self.quantizer.bins, \
+            &#34;quantizer bins must be a power of 2.&#34;
+
+    @property
+    def segment_length(self) -&gt; tp.Optional[int]:
+        if self.segment is None:
+            return None
+        return int(self.segment * self.sample_rate)
+
+    @property
+    def segment_stride(self) -&gt; tp.Optional[int]:
+        segment_length = self.segment_length
+        if segment_length is None:
+            return None
+        return max(1, int((1 - self.overlap) * segment_length))
+
+    def encode(self, x: torch.Tensor) -&gt; tp.List[EncodedFrame]:
+        &#34;&#34;&#34;Given a tensor `x`, returns a list of frames containing
+        the discrete encoded codes for `x`, along with rescaling factors
+        for each segment, when `self.normalize` is True.
+
+        Each frames is a tuple `(codebook, scale)`, with `codebook` of
+        shape `[B, K, T]`, with `K` the number of codebooks.
+        &#34;&#34;&#34;
+        assert x.dim() == 3
+        _, channels, length = x.shape
+        assert channels &gt; 0 and channels &lt;= 2
+        segment_length = self.segment_length
+        if segment_length is None:
+            segment_length = length
+            stride = length
+        else:
+            stride = self.segment_stride  # type: ignore
+            assert stride is not None
+
+        encoded_frames: tp.List[EncodedFrame] = []
+        for offset in range(0, length, stride):
+            frame = x[:, :, offset: offset + segment_length]
+            encoded_frames.append(self._encode_frame(frame))
+        return encoded_frames
+
+    def _encode_frame(self, x: torch.Tensor) -&gt; EncodedFrame:
+        length = x.shape[-1]
+        duration = length / self.sample_rate
+        assert self.segment is None or duration &lt;= 1e-5 + self.segment
+
+        if self.normalize:
+            mono = x.mean(dim=1, keepdim=True)
+            volume = mono.pow(2).mean(dim=2, keepdim=True).sqrt()
+            scale = 1e-8 + volume
+            x = x / scale
+            scale = scale.view(-1, 1)
+        else:
+            scale = None
+
+        emb = self.encoder(x)
+        codes = self.quantizer.encode(emb, self.frame_rate, self.bandwidth)
+        codes = codes.transpose(0, 1)
+        # codes is [B, K, T], with T frames, K nb of codebooks.
+        return codes, scale
+
+    def decode(self, encoded_frames: tp.List[EncodedFrame]) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Decode the given frames into a waveform.
+        Note that the output might be a bit bigger than the input. In that case,
+        any extra steps at the end can be trimmed.
+        &#34;&#34;&#34;
+        segment_length = self.segment_length
+        if segment_length is None:
+            assert len(encoded_frames) == 1
+            return self._decode_frame(encoded_frames[0])
+
+        frames = [self._decode_frame(frame) for frame in encoded_frames]
+        return _linear_overlap_add(frames, self.segment_stride or 1)
+
+    def _decode_frame(self, encoded_frame: EncodedFrame) -&gt; torch.Tensor:
+        codes, scale = encoded_frame
+        codes = codes.transpose(0, 1)
+        emb = self.quantizer.decode(codes)
+        out = self.decoder(emb)
+        if scale is not None:
+            out = out * scale.view(-1, 1, 1)
+        return out
+
+    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+        frames = self.encode(x)
+        return self.decode(frames)[:, :, :x.shape[-1]]
+
+    def set_target_bandwidth(self, bandwidth: float):
+        if bandwidth not in self.target_bandwidths:
+            raise ValueError(f&#34;This model doesn&#39;t support the bandwidth {bandwidth}. &#34;
+                             f&#34;Select one of {self.target_bandwidths}.&#34;)
+        self.bandwidth = bandwidth
+
+    def get_lm_model(self) -&gt; LMModel:
+        &#34;&#34;&#34;Return the associated LM model to improve the compression rate.
+        &#34;&#34;&#34;
+        device = next(self.parameters()).device
+        lm = LMModel(self.quantizer.n_q, self.quantizer.bins, num_layers=5, dim=200,
+                     past_context=int(3.5 * self.frame_rate)).to(device)
+        checkpoints = {
+            &#39;encodec_24khz&#39;: &#39;encodec_lm_24khz-1608e3c0.th&#39;,
+            &#39;encodec_48khz&#39;: &#39;encodec_lm_48khz-7add9fc3.th&#39;,
+        }
+        try:
+            checkpoint_name = checkpoints[self.name]
+        except KeyError:
+            raise RuntimeError(&#34;No LM pre-trained for the current Encodec model.&#34;)
+        url = _get_checkpoint_url(ROOT_URL, checkpoint_name)
+        state = torch.hub.load_state_dict_from_url(
+            url, map_location=&#39;cpu&#39;, check_hash=True)  # type: ignore
+        lm.load_state_dict(state)
+        lm.eval()
+        return lm
+
+    @staticmethod
+    def _get_model(target_bandwidths: tp.List[float],
+                   sample_rate: int = 24_000,
+                   channels: int = 1,
+                   causal: bool = True,
+                   model_norm: str = &#39;weight_norm&#39;,
+                   audio_normalize: bool = False,
+                   segment: tp.Optional[float] = None,
+                   name: str = &#39;unset&#39;):
+        encoder = m.SEANetEncoder(channels=channels, norm=model_norm, causal=causal)
+        decoder = m.SEANetDecoder(channels=channels, norm=model_norm, causal=causal)
+        n_q = int(1000 * target_bandwidths[-1] // (math.ceil(sample_rate / encoder.hop_length) * 10))
+        quantizer = qt.ResidualVectorQuantizer(
+            dimension=encoder.dimension,
+            n_q=n_q,
+            bins=1024,
+        )
+        model = EncodecModel(
+            encoder,
+            decoder,
+            quantizer,
+            target_bandwidths,
+            sample_rate,
+            channels,
+            normalize=audio_normalize,
+            segment=segment,
+            name=name,
+        )
+        return model
+
+    @staticmethod
+    def _get_pretrained(checkpoint_name: str, repository: tp.Optional[Path] = None):
+        if repository is not None:
+            if not repository.is_dir():
+                raise ValueError(f&#34;{repository} must exist and be a directory.&#34;)
+            file = repository / checkpoint_name
+            checksum = file.stem.split(&#39;-&#39;)[1]
+            _check_checksum(file, checksum)
+            return torch.load(file)
+        else:
+            url = _get_checkpoint_url(ROOT_URL, checkpoint_name)
+            return torch.hub.load_state_dict_from_url(url, map_location=&#39;cpu&#39;, check_hash=True)  # type:ignore
+
+    @staticmethod
+    def encodec_model_24khz(pretrained: bool = True, repository: tp.Optional[Path] = None):
+        &#34;&#34;&#34;Return the pretrained causal 24khz model.
+        &#34;&#34;&#34;
+        if repository:
+            assert pretrained
+        target_bandwidths = [1.5, 3., 6, 12., 24.]
+        checkpoint_name = &#39;encodec_24khz-d7cc33bc.th&#39;
+        sample_rate = 24_000
+        channels = 1
+        model = EncodecModel._get_model(
+            target_bandwidths, sample_rate, channels,
+            causal=True, model_norm=&#39;weight_norm&#39;, audio_normalize=False,
+            name=&#39;encodec_24khz&#39; if pretrained else &#39;unset&#39;)
+        if pretrained:
+            state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
+            model.load_state_dict(state_dict)
+        model.eval()
+        return model
+
+    @staticmethod
+    def encodec_model_48khz(pretrained: bool = True, repository: tp.Optional[Path] = None):
+        &#34;&#34;&#34;Return the pretrained 48khz model.
+        &#34;&#34;&#34;
+        if repository:
+            assert pretrained
+        target_bandwidths = [3., 6., 12., 24.]
+        checkpoint_name = &#39;encodec_48khz-7e698e3e.th&#39;
+        sample_rate = 48_000
+        channels = 2
+        model = EncodecModel._get_model(
+            target_bandwidths, sample_rate, channels,
+            causal=False, model_norm=&#39;time_group_norm&#39;, audio_normalize=True,
+            segment=1., name=&#39;encodec_48khz&#39; if pretrained else &#39;unset&#39;)
+        if pretrained:
+            state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
+            model.load_state_dict(state_dict)
+        model.eval()
+        return model</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="encodec.model.EncodecModel.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.model.EncodecModel.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.model.EncodecModel.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="encodec.model.EncodecModel.encodec_model_24khz"><code class="name flex">
+<span>def <span class="ident">encodec_model_24khz</span></span>(<span>pretrained: bool = True, repository: Optional[pathlib.Path] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the pretrained causal 24khz model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def encodec_model_24khz(pretrained: bool = True, repository: tp.Optional[Path] = None):
+    &#34;&#34;&#34;Return the pretrained causal 24khz model.
+    &#34;&#34;&#34;
+    if repository:
+        assert pretrained
+    target_bandwidths = [1.5, 3., 6, 12., 24.]
+    checkpoint_name = &#39;encodec_24khz-d7cc33bc.th&#39;
+    sample_rate = 24_000
+    channels = 1
+    model = EncodecModel._get_model(
+        target_bandwidths, sample_rate, channels,
+        causal=True, model_norm=&#39;weight_norm&#39;, audio_normalize=False,
+        name=&#39;encodec_24khz&#39; if pretrained else &#39;unset&#39;)
+    if pretrained:
+        state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
+        model.load_state_dict(state_dict)
+    model.eval()
+    return model</code></pre>
+</details>
+</dd>
+<dt id="encodec.model.EncodecModel.encodec_model_48khz"><code class="name flex">
+<span>def <span class="ident">encodec_model_48khz</span></span>(<span>pretrained: bool = True, repository: Optional[pathlib.Path] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the pretrained 48khz model.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def encodec_model_48khz(pretrained: bool = True, repository: tp.Optional[Path] = None):
+    &#34;&#34;&#34;Return the pretrained 48khz model.
+    &#34;&#34;&#34;
+    if repository:
+        assert pretrained
+    target_bandwidths = [3., 6., 12., 24.]
+    checkpoint_name = &#39;encodec_48khz-7e698e3e.th&#39;
+    sample_rate = 48_000
+    channels = 2
+    model = EncodecModel._get_model(
+        target_bandwidths, sample_rate, channels,
+        causal=False, model_norm=&#39;time_group_norm&#39;, audio_normalize=True,
+        segment=1., name=&#39;encodec_48khz&#39; if pretrained else &#39;unset&#39;)
+    if pretrained:
+        state_dict = EncodecModel._get_pretrained(checkpoint_name, repository)
+        model.load_state_dict(state_dict)
+    model.eval()
+    return model</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="encodec.model.EncodecModel.segment_length"><code class="name">var <span class="ident">segment_length</span> : Optional[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def segment_length(self) -&gt; tp.Optional[int]:
+    if self.segment is None:
+        return None
+    return int(self.segment * self.sample_rate)</code></pre>
+</details>
+</dd>
+<dt id="encodec.model.EncodecModel.segment_stride"><code class="name">var <span class="ident">segment_stride</span> : Optional[int]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def segment_stride(self) -&gt; tp.Optional[int]:
+    segment_length = self.segment_length
+    if segment_length is None:
+        return None
+    return max(1, int((1 - self.overlap) * segment_length))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="encodec.model.EncodecModel.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, encoded_frames: List[Tuple[torch.Tensor, Optional[torch.Tensor]]]) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode the given frames into a waveform.
+Note that the output might be a bit bigger than the input. In that case,
+any extra steps at the end can be trimmed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, encoded_frames: tp.List[EncodedFrame]) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Decode the given frames into a waveform.
+    Note that the output might be a bit bigger than the input. In that case,
+    any extra steps at the end can be trimmed.
+    &#34;&#34;&#34;
+    segment_length = self.segment_length
+    if segment_length is None:
+        assert len(encoded_frames) == 1
+        return self._decode_frame(encoded_frames[0])
+
+    frames = [self._decode_frame(frame) for frame in encoded_frames]
+    return _linear_overlap_add(frames, self.segment_stride or 1)</code></pre>
+</details>
+</dd>
+<dt id="encodec.model.EncodecModel.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, x: torch.Tensor) ‑> List[Tuple[torch.Tensor, Optional[torch.Tensor]]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a tensor <code>x</code>, returns a list of frames containing
+the discrete encoded codes for <code>x</code>, along with rescaling factors
+for each segment, when <code>self.normalize</code> is True.</p>
+<p>Each frames is a tuple <code>(codebook, scale)</code>, with <code>codebook</code> of
+shape <code>[B, K, T]</code>, with <code>K</code> the number of codebooks.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, x: torch.Tensor) -&gt; tp.List[EncodedFrame]:
+    &#34;&#34;&#34;Given a tensor `x`, returns a list of frames containing
+    the discrete encoded codes for `x`, along with rescaling factors
+    for each segment, when `self.normalize` is True.
+
+    Each frames is a tuple `(codebook, scale)`, with `codebook` of
+    shape `[B, K, T]`, with `K` the number of codebooks.
+    &#34;&#34;&#34;
+    assert x.dim() == 3
+    _, channels, length = x.shape
+    assert channels &gt; 0 and channels &lt;= 2
+    segment_length = self.segment_length
+    if segment_length is None:
+        segment_length = length
+        stride = length
+    else:
+        stride = self.segment_stride  # type: ignore
+        assert stride is not None
+
+    encoded_frames: tp.List[EncodedFrame] = []
+    for offset in range(0, length, stride):
+        frame = x[:, :, offset: offset + segment_length]
+        encoded_frames.append(self._encode_frame(frame))
+    return encoded_frames</code></pre>
+</details>
+</dd>
+<dt id="encodec.model.EncodecModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+    frames = self.encode(x)
+    return self.decode(frames)[:, :, :x.shape[-1]]</code></pre>
+</details>
+</dd>
+<dt id="encodec.model.EncodecModel.get_lm_model"><code class="name flex">
+<span>def <span class="ident">get_lm_model</span></span>(<span>self) ‑> <a title="encodec.model.LMModel" href="#encodec.model.LMModel">LMModel</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the associated LM model to improve the compression rate.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_lm_model(self) -&gt; LMModel:
+    &#34;&#34;&#34;Return the associated LM model to improve the compression rate.
+    &#34;&#34;&#34;
+    device = next(self.parameters()).device
+    lm = LMModel(self.quantizer.n_q, self.quantizer.bins, num_layers=5, dim=200,
+                 past_context=int(3.5 * self.frame_rate)).to(device)
+    checkpoints = {
+        &#39;encodec_24khz&#39;: &#39;encodec_lm_24khz-1608e3c0.th&#39;,
+        &#39;encodec_48khz&#39;: &#39;encodec_lm_48khz-7add9fc3.th&#39;,
+    }
+    try:
+        checkpoint_name = checkpoints[self.name]
+    except KeyError:
+        raise RuntimeError(&#34;No LM pre-trained for the current Encodec model.&#34;)
+    url = _get_checkpoint_url(ROOT_URL, checkpoint_name)
+    state = torch.hub.load_state_dict_from_url(
+        url, map_location=&#39;cpu&#39;, check_hash=True)  # type: ignore
+    lm.load_state_dict(state)
+    lm.eval()
+    return lm</code></pre>
+</details>
+</dd>
+<dt id="encodec.model.EncodecModel.set_target_bandwidth"><code class="name flex">
+<span>def <span class="ident">set_target_bandwidth</span></span>(<span>self, bandwidth: float)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_target_bandwidth(self, bandwidth: float):
+    if bandwidth not in self.target_bandwidths:
+        raise ValueError(f&#34;This model doesn&#39;t support the bandwidth {bandwidth}. &#34;
+                         f&#34;Select one of {self.target_bandwidths}.&#34;)
+    self.bandwidth = bandwidth</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="encodec.model.LMModel"><code class="flex name class">
+<span>class <span class="ident">LMModel</span></span>
+<span>(</span><span>n_q: int = 32, card: int = 1024, dim: int = 200, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Language Model to estimate probabilities of each codebook entry.
+We predict all codebooks in parallel for a given time step.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>n_q</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of codebooks.</dd>
+<dt><strong><code>card</code></strong> :&ensp;<code>int</code></dt>
+<dd>codebook cardinality.</dd>
+<dt><strong><code>dim</code></strong> :&ensp;<code>int</code></dt>
+<dd>transformer dimension.</dd>
+<dt><strong><code>**kwargs</code></strong></dt>
+<dd>passed to <code><a title="encodec.modules.transformer.StreamingTransformerEncoder" href="modules/transformer.html#encodec.modules.transformer.StreamingTransformerEncoder">StreamingTransformerEncoder</a></code>.</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LMModel(nn.Module):
+    &#34;&#34;&#34;Language Model to estimate probabilities of each codebook entry.
+    We predict all codebooks in parallel for a given time step.
+
+    Args:
+        n_q (int): number of codebooks.
+        card (int): codebook cardinality.
+        dim (int): transformer dimension.
+        **kwargs: passed to `encodec.modules.transformer.StreamingTransformerEncoder`.
+    &#34;&#34;&#34;
+    def __init__(self, n_q: int = 32, card: int = 1024, dim: int = 200, **kwargs):
+        super().__init__()
+        self.card = card
+        self.n_q = n_q
+        self.dim = dim
+        self.transformer = m.StreamingTransformerEncoder(dim=dim, **kwargs)
+        self.emb = nn.ModuleList([nn.Embedding(card + 1, dim) for _ in range(n_q)])
+        self.linears = nn.ModuleList([nn.Linear(dim, card) for _ in range(n_q)])
+
+    def forward(self, indices: torch.Tensor,
+                states: tp.Optional[tp.List[torch.Tensor]] = None, offset: int = 0):
+        &#34;&#34;&#34;
+        Args:
+            indices (torch.Tensor): indices from the previous time step. Indices
+                should be 1 + actual index in the codebook. The value 0 is reserved for
+                when the index is missing (i.e. first time step). Shape should be
+                `[B, n_q, T]`.
+            states: state for the streaming decoding.
+            offset: offset of the current time step.
+
+        Returns a 3-tuple `(probabilities, new_states, new_offset)` with probabilities
+        with a shape `[B, card, n_q, T]`.
+
+        &#34;&#34;&#34;
+        B, K, T = indices.shape
+        input_ = sum([self.emb[k](indices[:, k]) for k in range(K)])
+        out, states, offset = self.transformer(input_, states, offset)
+        logits = torch.stack([self.linears[k](out) for k in range(K)], dim=1).permute(0, 3, 1, 2)
+        return torch.softmax(logits, dim=1), states, offset</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="encodec.model.LMModel.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.model.LMModel.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.model.LMModel.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="encodec.model.LMModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, indices: torch.Tensor, states: Optional[List[torch.Tensor]] = None, offset: int = 0) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>indices</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>indices from the previous time step. Indices
+should be 1 + actual index in the codebook. The value 0 is reserved for
+when the index is missing (i.e. first time step). Shape should be
+<code>[B, n_q, T]</code>.</dd>
+<dt><strong><code>states</code></strong></dt>
+<dd>state for the streaming decoding.</dd>
+<dt><strong><code>offset</code></strong></dt>
+<dd>offset of the current time step.</dd>
+</dl>
+<p>Returns a 3-tuple <code>(probabilities, new_states, new_offset)</code> with probabilities
+with a shape <code>[B, card, n_q, T]</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, indices: torch.Tensor,
+            states: tp.Optional[tp.List[torch.Tensor]] = None, offset: int = 0):
+    &#34;&#34;&#34;
+    Args:
+        indices (torch.Tensor): indices from the previous time step. Indices
+            should be 1 + actual index in the codebook. The value 0 is reserved for
+            when the index is missing (i.e. first time step). Shape should be
+            `[B, n_q, T]`.
+        states: state for the streaming decoding.
+        offset: offset of the current time step.
+
+    Returns a 3-tuple `(probabilities, new_states, new_offset)` with probabilities
+    with a shape `[B, card, n_q, T]`.
+
+    &#34;&#34;&#34;
+    B, K, T = indices.shape
+    input_ = sum([self.emb[k](indices[:, k]) for k in range(K)])
+    out, states, offset = self.transformer(input_, states, offset)
+    logits = torch.stack([self.linears[k](out) for k in range(K)], dim=1).permute(0, 3, 1, 2)
+    return torch.softmax(logits, dim=1), states, offset</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="encodec" href="index.html">encodec</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="encodec.model.test" href="#encodec.model.test">test</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="encodec.model.EncodecModel" href="#encodec.model.EncodecModel">EncodecModel</a></code></h4>
+<ul class="">
+<li><code><a title="encodec.model.EncodecModel.call_super_init" href="#encodec.model.EncodecModel.call_super_init">call_super_init</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.decode" href="#encodec.model.EncodecModel.decode">decode</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.dump_patches" href="#encodec.model.EncodecModel.dump_patches">dump_patches</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.encode" href="#encodec.model.EncodecModel.encode">encode</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.encodec_model_24khz" href="#encodec.model.EncodecModel.encodec_model_24khz">encodec_model_24khz</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.encodec_model_48khz" href="#encodec.model.EncodecModel.encodec_model_48khz">encodec_model_48khz</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.forward" href="#encodec.model.EncodecModel.forward">forward</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.get_lm_model" href="#encodec.model.EncodecModel.get_lm_model">get_lm_model</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.segment_length" href="#encodec.model.EncodecModel.segment_length">segment_length</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.segment_stride" href="#encodec.model.EncodecModel.segment_stride">segment_stride</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.set_target_bandwidth" href="#encodec.model.EncodecModel.set_target_bandwidth">set_target_bandwidth</a></code></li>
+<li><code><a title="encodec.model.EncodecModel.training" href="#encodec.model.EncodecModel.training">training</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="encodec.model.LMModel" href="#encodec.model.LMModel">LMModel</a></code></h4>
+<ul class="">
+<li><code><a title="encodec.model.LMModel.call_super_init" href="#encodec.model.LMModel.call_super_init">call_super_init</a></code></li>
+<li><code><a title="encodec.model.LMModel.dump_patches" href="#encodec.model.LMModel.dump_patches">dump_patches</a></code></li>
+<li><code><a title="encodec.model.LMModel.forward" href="#encodec.model.LMModel.forward">forward</a></code></li>
+<li><code><a title="encodec.model.LMModel.training" href="#encodec.model.LMModel.training">training</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

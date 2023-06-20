@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>encodec.quantization.vq API documentation</title>
+<meta name="description" content="Residual vector quantizer implementation." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>encodec.quantization.vq</code></h1>
+</header>
+<section id="section-intro">
+<p>Residual vector quantizer implementation.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
+&#34;&#34;&#34;Residual vector quantizer implementation.&#34;&#34;&#34;
+
+from dataclasses import dataclass, field
+import math
+import typing as tp
+
+import torch
+from torch import nn
+
+from .core_vq import ResidualVectorQuantization
+
+
+@dataclass
+class QuantizedResult:
+    quantized: torch.Tensor
+    codes: torch.Tensor
+    bandwidth: torch.Tensor  # bandwidth in kb/s used, per batch item.
+    penalty: tp.Optional[torch.Tensor] = None
+    metrics: dict = field(default_factory=dict)
+
+
+class ResidualVectorQuantizer(nn.Module):
+    &#34;&#34;&#34;Residual Vector Quantizer.
+    Args:
+        dimension (int): Dimension of the codebooks.
+        n_q (int): Number of residual vector quantizers used.
+        bins (int): Codebook size.
+        decay (float): Decay for exponential moving average over the codebooks.
+        kmeans_init (bool): Whether to use kmeans to initialize the codebooks.
+        kmeans_iters (int): Number of iterations used for kmeans initialization.
+        threshold_ema_dead_code (int): Threshold for dead code expiration. Replace any codes
+            that have an exponential moving average cluster size less than the specified threshold with
+            randomly selected vector from the current batch.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        dimension: int = 256,
+        n_q: int = 8,
+        bins: int = 1024,
+        decay: float = 0.99,
+        kmeans_init: bool = True,
+        kmeans_iters: int = 50,
+        threshold_ema_dead_code: int = 2,
+    ):
+        super().__init__()
+        self.n_q = n_q
+        self.dimension = dimension
+        self.bins = bins
+        self.decay = decay
+        self.kmeans_init = kmeans_init
+        self.kmeans_iters = kmeans_iters
+        self.threshold_ema_dead_code = threshold_ema_dead_code
+        self.vq = ResidualVectorQuantization(
+            dim=self.dimension,
+            codebook_size=self.bins,
+            num_quantizers=self.n_q,
+            decay=self.decay,
+            kmeans_init=self.kmeans_init,
+            kmeans_iters=self.kmeans_iters,
+            threshold_ema_dead_code=self.threshold_ema_dead_code,
+        )
+
+    def forward(self, x: torch.Tensor, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; QuantizedResult:
+        &#34;&#34;&#34;Residual vector quantization on the given input tensor.
+        Args:
+            x (torch.Tensor): Input tensor.
+            frame_rate (int): Sample rate of the input tensor.
+            bandwidth (float): Target bandwidth.
+        Returns:
+            QuantizedResult:
+                The quantized (or approximately quantized) representation with
+                the associated bandwidth and any penalty term for the loss.
+        &#34;&#34;&#34;
+        bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
+        n_q = self.get_num_quantizers_for_bandwidth(frame_rate, bandwidth)
+        quantized, codes, commit_loss = self.vq(x, n_q=n_q)
+        bw = torch.tensor(n_q * bw_per_q).to(x)
+        return QuantizedResult(quantized, codes, bw, penalty=torch.mean(commit_loss))
+
+    def get_num_quantizers_for_bandwidth(self, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; int:
+        &#34;&#34;&#34;Return n_q based on specified target bandwidth.
+        &#34;&#34;&#34;
+        bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
+        n_q = self.n_q
+        if bandwidth and bandwidth &gt; 0.:
+            # bandwidth is represented as a thousandth of what it is, e.g. 6kbps bandwidth is represented as
+            # bandwidth == 6.0
+            n_q = int(max(1, math.floor(bandwidth * 1000 / bw_per_q)))
+        return n_q
+
+    def get_bandwidth_per_quantizer(self, frame_rate: int):
+        &#34;&#34;&#34;Return bandwidth per quantizer for a given input frame rate.
+        Each quantizer encodes a frame with lg(bins) bits.
+        &#34;&#34;&#34;
+        return math.log2(self.bins) * frame_rate
+
+    def encode(self, x: torch.Tensor, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Encode a given input tensor with the specified frame rate at the given bandwidth.
+        The RVQ encode method sets the appropriate number of quantizers to use
+        and returns indices for each quantizer.
+        &#34;&#34;&#34;
+        n_q = self.get_num_quantizers_for_bandwidth(frame_rate, bandwidth)
+        codes = self.vq.encode(x, n_q=n_q)
+        return codes
+
+    def decode(self, codes: torch.Tensor) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Decode the given codes to the quantized representation.
+        &#34;&#34;&#34;
+        quantized = self.vq.decode(codes)
+        return quantized</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="encodec.quantization.vq.QuantizedResult"><code class="flex name class">
+<span>class <span class="ident">QuantizedResult</span></span>
+<span>(</span><span>quantized: torch.Tensor, codes: torch.Tensor, bandwidth: torch.Tensor, penalty: Optional[torch.Tensor] = None, metrics: dict = &lt;factory&gt;)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>QuantizedResult(quantized: torch.Tensor, codes: torch.Tensor, bandwidth: torch.Tensor, penalty: Union[torch.Tensor, NoneType] = None, metrics: dict = <factory>)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QuantizedResult:
+    quantized: torch.Tensor
+    codes: torch.Tensor
+    bandwidth: torch.Tensor  # bandwidth in kb/s used, per batch item.
+    penalty: tp.Optional[torch.Tensor] = None
+    metrics: dict = field(default_factory=dict)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="encodec.quantization.vq.QuantizedResult.bandwidth"><code class="name">var <span class="ident">bandwidth</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.quantization.vq.QuantizedResult.codes"><code class="name">var <span class="ident">codes</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.quantization.vq.QuantizedResult.metrics"><code class="name">var <span class="ident">metrics</span> : dict</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.quantization.vq.QuantizedResult.penalty"><code class="name">var <span class="ident">penalty</span> : Optional[torch.Tensor]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.quantization.vq.QuantizedResult.quantized"><code class="name">var <span class="ident">quantized</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer"><code class="flex name class">
+<span>class <span class="ident">ResidualVectorQuantizer</span></span>
+<span>(</span><span>dimension: int = 256, n_q: int = 8, bins: int = 1024, decay: float = 0.99, kmeans_init: bool = True, kmeans_iters: int = 50, threshold_ema_dead_code: int = 2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Residual Vector Quantizer.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dimension</code></strong> :&ensp;<code>int</code></dt>
+<dd>Dimension of the codebooks.</dd>
+<dt><strong><code>n_q</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of residual vector quantizers used.</dd>
+<dt><strong><code>bins</code></strong> :&ensp;<code>int</code></dt>
+<dd>Codebook size.</dd>
+<dt><strong><code>decay</code></strong> :&ensp;<code>float</code></dt>
+<dd>Decay for exponential moving average over the codebooks.</dd>
+<dt><strong><code>kmeans_init</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to use kmeans to initialize the codebooks.</dd>
+<dt><strong><code>kmeans_iters</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of iterations used for kmeans initialization.</dd>
+<dt><strong><code>threshold_ema_dead_code</code></strong> :&ensp;<code>int</code></dt>
+<dd>Threshold for dead code expiration. Replace any codes
+that have an exponential moving average cluster size less than the specified threshold with
+randomly selected vector from the current batch.</dd>
+</dl>
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ResidualVectorQuantizer(nn.Module):
+    &#34;&#34;&#34;Residual Vector Quantizer.
+    Args:
+        dimension (int): Dimension of the codebooks.
+        n_q (int): Number of residual vector quantizers used.
+        bins (int): Codebook size.
+        decay (float): Decay for exponential moving average over the codebooks.
+        kmeans_init (bool): Whether to use kmeans to initialize the codebooks.
+        kmeans_iters (int): Number of iterations used for kmeans initialization.
+        threshold_ema_dead_code (int): Threshold for dead code expiration. Replace any codes
+            that have an exponential moving average cluster size less than the specified threshold with
+            randomly selected vector from the current batch.
+    &#34;&#34;&#34;
+    def __init__(
+        self,
+        dimension: int = 256,
+        n_q: int = 8,
+        bins: int = 1024,
+        decay: float = 0.99,
+        kmeans_init: bool = True,
+        kmeans_iters: int = 50,
+        threshold_ema_dead_code: int = 2,
+    ):
+        super().__init__()
+        self.n_q = n_q
+        self.dimension = dimension
+        self.bins = bins
+        self.decay = decay
+        self.kmeans_init = kmeans_init
+        self.kmeans_iters = kmeans_iters
+        self.threshold_ema_dead_code = threshold_ema_dead_code
+        self.vq = ResidualVectorQuantization(
+            dim=self.dimension,
+            codebook_size=self.bins,
+            num_quantizers=self.n_q,
+            decay=self.decay,
+            kmeans_init=self.kmeans_init,
+            kmeans_iters=self.kmeans_iters,
+            threshold_ema_dead_code=self.threshold_ema_dead_code,
+        )
+
+    def forward(self, x: torch.Tensor, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; QuantizedResult:
+        &#34;&#34;&#34;Residual vector quantization on the given input tensor.
+        Args:
+            x (torch.Tensor): Input tensor.
+            frame_rate (int): Sample rate of the input tensor.
+            bandwidth (float): Target bandwidth.
+        Returns:
+            QuantizedResult:
+                The quantized (or approximately quantized) representation with
+                the associated bandwidth and any penalty term for the loss.
+        &#34;&#34;&#34;
+        bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
+        n_q = self.get_num_quantizers_for_bandwidth(frame_rate, bandwidth)
+        quantized, codes, commit_loss = self.vq(x, n_q=n_q)
+        bw = torch.tensor(n_q * bw_per_q).to(x)
+        return QuantizedResult(quantized, codes, bw, penalty=torch.mean(commit_loss))
+
+    def get_num_quantizers_for_bandwidth(self, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; int:
+        &#34;&#34;&#34;Return n_q based on specified target bandwidth.
+        &#34;&#34;&#34;
+        bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
+        n_q = self.n_q
+        if bandwidth and bandwidth &gt; 0.:
+            # bandwidth is represented as a thousandth of what it is, e.g. 6kbps bandwidth is represented as
+            # bandwidth == 6.0
+            n_q = int(max(1, math.floor(bandwidth * 1000 / bw_per_q)))
+        return n_q
+
+    def get_bandwidth_per_quantizer(self, frame_rate: int):
+        &#34;&#34;&#34;Return bandwidth per quantizer for a given input frame rate.
+        Each quantizer encodes a frame with lg(bins) bits.
+        &#34;&#34;&#34;
+        return math.log2(self.bins) * frame_rate
+
+    def encode(self, x: torch.Tensor, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Encode a given input tensor with the specified frame rate at the given bandwidth.
+        The RVQ encode method sets the appropriate number of quantizers to use
+        and returns indices for each quantizer.
+        &#34;&#34;&#34;
+        n_q = self.get_num_quantizers_for_bandwidth(frame_rate, bandwidth)
+        codes = self.vq.encode(x, n_q=n_q)
+        return codes
+
+    def decode(self, codes: torch.Tensor) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Decode the given codes to the quantized representation.
+        &#34;&#34;&#34;
+        quantized = self.vq.decode(codes)
+        return quantized</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, codes: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode the given codes to the quantized representation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode(self, codes: torch.Tensor) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Decode the given codes to the quantized representation.
+    &#34;&#34;&#34;
+    quantized = self.vq.decode(codes)
+    return quantized</code></pre>
+</details>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, x: torch.Tensor, frame_rate: int, bandwidth: Optional[float] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encode a given input tensor with the specified frame rate at the given bandwidth.
+The RVQ encode method sets the appropriate number of quantizers to use
+and returns indices for each quantizer.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode(self, x: torch.Tensor, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Encode a given input tensor with the specified frame rate at the given bandwidth.
+    The RVQ encode method sets the appropriate number of quantizers to use
+    and returns indices for each quantizer.
+    &#34;&#34;&#34;
+    n_q = self.get_num_quantizers_for_bandwidth(frame_rate, bandwidth)
+    codes = self.vq.encode(x, n_q=n_q)
+    return codes</code></pre>
+</details>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor, frame_rate: int, bandwidth: Optional[float] = None) ‑> <a title="encodec.quantization.vq.QuantizedResult" href="#encodec.quantization.vq.QuantizedResult">QuantizedResult</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Residual vector quantization on the given input tensor.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Input tensor.</dd>
+<dt><strong><code>frame_rate</code></strong> :&ensp;<code>int</code></dt>
+<dd>Sample rate of the input tensor.</dd>
+<dt><strong><code>bandwidth</code></strong> :&ensp;<code>float</code></dt>
+<dd>Target bandwidth.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>QuantizedResult:
+The quantized (or approximately quantized) representation with
+the associated bandwidth and any penalty term for the loss.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; QuantizedResult:
+    &#34;&#34;&#34;Residual vector quantization on the given input tensor.
+    Args:
+        x (torch.Tensor): Input tensor.
+        frame_rate (int): Sample rate of the input tensor.
+        bandwidth (float): Target bandwidth.
+    Returns:
+        QuantizedResult:
+            The quantized (or approximately quantized) representation with
+            the associated bandwidth and any penalty term for the loss.
+    &#34;&#34;&#34;
+    bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
+    n_q = self.get_num_quantizers_for_bandwidth(frame_rate, bandwidth)
+    quantized, codes, commit_loss = self.vq(x, n_q=n_q)
+    bw = torch.tensor(n_q * bw_per_q).to(x)
+    return QuantizedResult(quantized, codes, bw, penalty=torch.mean(commit_loss))</code></pre>
+</details>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.get_bandwidth_per_quantizer"><code class="name flex">
+<span>def <span class="ident">get_bandwidth_per_quantizer</span></span>(<span>self, frame_rate: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return bandwidth per quantizer for a given input frame rate.
+Each quantizer encodes a frame with lg(bins) bits.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bandwidth_per_quantizer(self, frame_rate: int):
+    &#34;&#34;&#34;Return bandwidth per quantizer for a given input frame rate.
+    Each quantizer encodes a frame with lg(bins) bits.
+    &#34;&#34;&#34;
+    return math.log2(self.bins) * frame_rate</code></pre>
+</details>
+</dd>
+<dt id="encodec.quantization.vq.ResidualVectorQuantizer.get_num_quantizers_for_bandwidth"><code class="name flex">
+<span>def <span class="ident">get_num_quantizers_for_bandwidth</span></span>(<span>self, frame_rate: int, bandwidth: Optional[float] = None) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return n_q based on specified target bandwidth.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_num_quantizers_for_bandwidth(self, frame_rate: int, bandwidth: tp.Optional[float] = None) -&gt; int:
+    &#34;&#34;&#34;Return n_q based on specified target bandwidth.
+    &#34;&#34;&#34;
+    bw_per_q = self.get_bandwidth_per_quantizer(frame_rate)
+    n_q = self.n_q
+    if bandwidth and bandwidth &gt; 0.:
+        # bandwidth is represented as a thousandth of what it is, e.g. 6kbps bandwidth is represented as
+        # bandwidth == 6.0
+        n_q = int(max(1, math.floor(bandwidth * 1000 / bw_per_q)))
+    return n_q</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="encodec.quantization" href="index.html">encodec.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="encodec.quantization.vq.QuantizedResult" href="#encodec.quantization.vq.QuantizedResult">QuantizedResult</a></code></h4>
+<ul class="">
+<li><code><a title="encodec.quantization.vq.QuantizedResult.bandwidth" href="#encodec.quantization.vq.QuantizedResult.bandwidth">bandwidth</a></code></li>
+<li><code><a title="encodec.quantization.vq.QuantizedResult.codes" href="#encodec.quantization.vq.QuantizedResult.codes">codes</a></code></li>
+<li><code><a title="encodec.quantization.vq.QuantizedResult.metrics" href="#encodec.quantization.vq.QuantizedResult.metrics">metrics</a></code></li>
+<li><code><a title="encodec.quantization.vq.QuantizedResult.penalty" href="#encodec.quantization.vq.QuantizedResult.penalty">penalty</a></code></li>
+<li><code><a title="encodec.quantization.vq.QuantizedResult.quantized" href="#encodec.quantization.vq.QuantizedResult.quantized">quantized</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="encodec.quantization.vq.ResidualVectorQuantizer" href="#encodec.quantization.vq.ResidualVectorQuantizer">ResidualVectorQuantizer</a></code></h4>
+<ul class="">
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.call_super_init" href="#encodec.quantization.vq.ResidualVectorQuantizer.call_super_init">call_super_init</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.decode" href="#encodec.quantization.vq.ResidualVectorQuantizer.decode">decode</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.dump_patches" href="#encodec.quantization.vq.ResidualVectorQuantizer.dump_patches">dump_patches</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.encode" href="#encodec.quantization.vq.ResidualVectorQuantizer.encode">encode</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.forward" href="#encodec.quantization.vq.ResidualVectorQuantizer.forward">forward</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.get_bandwidth_per_quantizer" href="#encodec.quantization.vq.ResidualVectorQuantizer.get_bandwidth_per_quantizer">get_bandwidth_per_quantizer</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.get_num_quantizers_for_bandwidth" href="#encodec.quantization.vq.ResidualVectorQuantizer.get_num_quantizers_for_bandwidth">get_num_quantizers_for_bandwidth</a></code></li>
+<li><code><a title="encodec.quantization.vq.ResidualVectorQuantizer.training" href="#encodec.quantization.vq.ResidualVectorQuantizer.training">training</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

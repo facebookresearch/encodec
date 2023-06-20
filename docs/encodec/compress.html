@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>encodec.compress API documentation</title>
+<meta name="description" content="API to compress/decompress audio to bytestreams." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>encodec.compress</code></h1>
+</header>
+<section id="section-intro">
+<p>API to compress/decompress audio to bytestreams.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
+&#34;&#34;&#34;API to compress/decompress audio to bytestreams.&#34;&#34;&#34;
+
+import io
+import math
+import struct
+import time
+import typing as tp
+
+import torch
+
+from . import binary
+from .quantization.ac import ArithmeticCoder, ArithmeticDecoder, build_stable_quantized_cdf
+from .model import EncodecModel, EncodedFrame
+
+
+MODELS = {
+    &#39;encodec_24khz&#39;: EncodecModel.encodec_model_24khz,
+    &#39;encodec_48khz&#39;: EncodecModel.encodec_model_48khz,
+}
+
+
+def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
+                     use_lm: bool = True):
+    &#34;&#34;&#34;Compress a waveform to a file-object using the given model.
+
+    Args:
+        model (EncodecModel): a pre-trained EncodecModel to use to compress the audio.
+        wav (torch.Tensor): waveform to compress, should have a shape `[C, T]`, with `C`
+            matching `model.channels`, and the proper sample rate (e.g. `model.sample_rate`).
+            Use `utils.convert_audio` if this is not the case.
+        fo (IO[bytes]): file-object to which the compressed bits will be written.
+            See `compress` if you want obtain a `bytes` object instead.
+        use_lm (bool): if True, use a pre-trained language model to further
+            compress the stream using Entropy Coding. This will slow down compression
+            quite a bit, expect between 20 to 30% of size reduction.
+    &#34;&#34;&#34;
+    assert wav.dim() == 2, &#34;Only single waveform can be encoded.&#34;
+    if model.name not in MODELS:
+        raise ValueError(f&#34;The provided model {model.name} is not supported.&#34;)
+
+    if use_lm:
+        lm = model.get_lm_model()
+
+    with torch.no_grad():
+        frames = model.encode(wav[None])
+
+    metadata = {
+        &#39;m&#39;: model.name,                 # model name
+        &#39;al&#39;: wav.shape[-1],             # audio_length
+        &#39;nc&#39;: frames[0][0].shape[1],     # num_codebooks
+        &#39;lm&#39;: use_lm,                    # use lm?
+    }
+    binary.write_ecdc_header(fo, metadata)
+
+    for (frame, scale) in frames:
+        if scale is not None:
+            fo.write(struct.pack(&#39;!f&#39;, scale.cpu().item()))
+        _, K, T = frame.shape
+        if use_lm:
+            coder = ArithmeticCoder(fo)
+            states: tp.Any = None
+            offset = 0
+            input_ = torch.zeros(1, K, 1, dtype=torch.long, device=wav.device)
+        else:
+            packer = binary.BitPacker(model.bits_per_codebook, fo)
+        for t in range(T):
+            if use_lm:
+                with torch.no_grad():
+                    probas, states, offset = lm(input_, states, offset)
+                # We emulate a streaming scenario even though we do not provide an API for it.
+                # This gives us a more accurate benchmark.
+                input_ = 1 + frame[:, :, t: t + 1]
+            for k, value in enumerate(frame[0, :, t].tolist()):
+                if use_lm:
+                    q_cdf = build_stable_quantized_cdf(
+                        probas[0, :, k, 0], coder.total_range_bits, check=False)
+                    coder.push(value, q_cdf)
+                else:
+                    packer.push(value)
+        if use_lm:
+            coder.flush()
+        else:
+            packer.flush()
+
+
+def decompress_from_file(fo: tp.IO[bytes], device=&#39;cpu&#39;) -&gt; tp.Tuple[torch.Tensor, int]:
+    &#34;&#34;&#34;Decompress from a file-object.
+    Returns a tuple `(wav, sample_rate)`.
+
+    Args:
+        fo (IO[bytes]): file-object from which to read. If you want to decompress
+            from `bytes` instead, see `decompress`.
+        device: device to use to perform the computations.
+    &#34;&#34;&#34;
+    metadata = binary.read_ecdc_header(fo)
+    model_name = metadata[&#39;m&#39;]
+    audio_length = metadata[&#39;al&#39;]
+    num_codebooks = metadata[&#39;nc&#39;]
+    use_lm = metadata[&#39;lm&#39;]
+    assert isinstance(audio_length, int)
+    assert isinstance(num_codebooks, int)
+    if model_name not in MODELS:
+        raise ValueError(f&#34;The audio was compressed with an unsupported model {model_name}.&#34;)
+    model = MODELS[model_name]().to(device)
+
+    if use_lm:
+        lm = model.get_lm_model()
+
+    frames: tp.List[EncodedFrame] = []
+    segment_length = model.segment_length or audio_length
+    segment_stride = model.segment_stride or audio_length
+    for offset in range(0, audio_length, segment_stride):
+        this_segment_length = min(audio_length - offset, segment_length)
+        frame_length = int(math.ceil(this_segment_length * model.frame_rate / model.sample_rate))
+        if model.normalize:
+            scale_f, = struct.unpack(&#39;!f&#39;, binary._read_exactly(fo, struct.calcsize(&#39;!f&#39;)))
+            scale = torch.tensor(scale_f, device=device).view(1)
+        else:
+            scale = None
+        if use_lm:
+            decoder = ArithmeticDecoder(fo)
+            states: tp.Any = None
+            offset = 0
+            input_ = torch.zeros(1, num_codebooks, 1, dtype=torch.long, device=device)
+        else:
+            unpacker = binary.BitUnpacker(model.bits_per_codebook, fo)
+        frame = torch.zeros(1, num_codebooks, frame_length, dtype=torch.long, device=device)
+        for t in range(frame_length):
+            if use_lm:
+                with torch.no_grad():
+                    probas, states, offset = lm(input_, states, offset)
+            code_list: tp.List[int] = []
+            for k in range(num_codebooks):
+                if use_lm:
+                    q_cdf = build_stable_quantized_cdf(
+                        probas[0, :, k, 0], decoder.total_range_bits, check=False)
+                    code = decoder.pull(q_cdf)
+                else:
+                    code = unpacker.pull()
+                if code is None:
+                    raise EOFError(&#34;The stream ended sooner than expected.&#34;)
+                code_list.append(code)
+            codes = torch.tensor(code_list, dtype=torch.long, device=device)
+            frame[0, :, t] = codes
+            if use_lm:
+                input_ = 1 + frame[:, :, t: t + 1]
+        frames.append((frame, scale))
+    with torch.no_grad():
+        wav = model.decode(frames)
+    return wav[0, :, :audio_length], model.sample_rate
+
+
+def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False) -&gt; bytes:
+    &#34;&#34;&#34;Compress a waveform using the given model. Returns the compressed bytes.
+
+    Args:
+        model (EncodecModel): a pre-trained EncodecModel to use to compress the audio.
+        wav (torch.Tensor): waveform to compress, should have a shape `[C, T]`, with `C`
+            matching `model.channels`, and the proper sample rate (e.g. `model.sample_rate`).
+            Use `utils.convert_audio` if this is not the case.
+        use_lm (bool): if True, use a pre-trained language model to further
+            compress the stream using Entropy Coding. This will slow down compression
+            quite a bit, expect between 20 to 30% of size reduction.
+    &#34;&#34;&#34;
+    fo = io.BytesIO()
+    compress_to_file(model, wav, fo, use_lm=use_lm)
+    return fo.getvalue()
+
+
+def decompress(compressed: bytes, device=&#39;cpu&#39;) -&gt; tp.Tuple[torch.Tensor, int]:
+    &#34;&#34;&#34;Decompress from a file-object.
+    Returns a tuple `(wav, sample_rate)`.
+
+    Args:
+        compressed (bytes): compressed bytes.
+        device: device to use to perform the computations.
+    &#34;&#34;&#34;
+    fo = io.BytesIO(compressed)
+    return decompress_from_file(fo, device=device)
+
+
+def test():
+    import torchaudio
+    torch.set_num_threads(1)
+    for name in MODELS.keys():
+        model = MODELS[name]()
+        sr = model.sample_rate // 1000
+        x, _ = torchaudio.load(f&#39;test_{sr}k.wav&#39;)
+        x = x[:, :model.sample_rate * 5]
+        model.set_target_bandwidth(12)
+        for use_lm in [False, True]:
+            print(f&#34;Doing {name}, use_lm={use_lm}&#34;)
+            begin = time.time()
+            res = compress(model, x, use_lm=use_lm)
+            t_comp = time.time() - begin
+            x_dec, _ = decompress(res)
+            t_decomp = time.time() - begin - t_comp
+            kbps = 8 * len(res) / 1000 / (x.shape[-1] / model.sample_rate)
+            print(f&#34;kbps: {kbps:.1f}, time comp: {t_comp:.1f} sec. &#34;
+                  f&#34;time decomp:{t_decomp:.1f}.&#34;)
+            assert x_dec.shape == x.shape
+
+
+if __name__ == &#39;__main__&#39;:
+    test()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="encodec.compress.compress"><code class="name flex">
+<span>def <span class="ident">compress</span></span>(<span>model: <a title="encodec.model.EncodecModel" href="model.html#encodec.model.EncodecModel">EncodecModel</a>, wav: torch.Tensor, use_lm: bool = False) ‑> bytes</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compress a waveform using the given model. Returns the compressed bytes.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model</code></strong> :&ensp;<code>EncodecModel</code></dt>
+<dd>a pre-trained EncodecModel to use to compress the audio.</dd>
+<dt><strong><code>wav</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>waveform to compress, should have a shape <code>[C, T]</code>, with <code>C</code>
+matching <code>model.channels</code>, and the proper sample rate (e.g. <code>model.sample_rate</code>).
+Use <code>utils.convert_audio</code> if this is not the case.</dd>
+<dt><strong><code>use_lm</code></strong> :&ensp;<code>bool</code></dt>
+<dd>if True, use a pre-trained language model to further
+compress the stream using Entropy Coding. This will slow down compression
+quite a bit, expect between 20 to 30% of size reduction.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compress(model: EncodecModel, wav: torch.Tensor, use_lm: bool = False) -&gt; bytes:
+    &#34;&#34;&#34;Compress a waveform using the given model. Returns the compressed bytes.
+
+    Args:
+        model (EncodecModel): a pre-trained EncodecModel to use to compress the audio.
+        wav (torch.Tensor): waveform to compress, should have a shape `[C, T]`, with `C`
+            matching `model.channels`, and the proper sample rate (e.g. `model.sample_rate`).
+            Use `utils.convert_audio` if this is not the case.
+        use_lm (bool): if True, use a pre-trained language model to further
+            compress the stream using Entropy Coding. This will slow down compression
+            quite a bit, expect between 20 to 30% of size reduction.
+    &#34;&#34;&#34;
+    fo = io.BytesIO()
+    compress_to_file(model, wav, fo, use_lm=use_lm)
+    return fo.getvalue()</code></pre>
+</details>
+</dd>
+<dt id="encodec.compress.compress_to_file"><code class="name flex">
+<span>def <span class="ident">compress_to_file</span></span>(<span>model: <a title="encodec.model.EncodecModel" href="model.html#encodec.model.EncodecModel">EncodecModel</a>, wav: torch.Tensor, fo: IO[bytes], use_lm: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compress a waveform to a file-object using the given model.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model</code></strong> :&ensp;<code>EncodecModel</code></dt>
+<dd>a pre-trained EncodecModel to use to compress the audio.</dd>
+<dt><strong><code>wav</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>waveform to compress, should have a shape <code>[C, T]</code>, with <code>C</code>
+matching <code>model.channels</code>, and the proper sample rate (e.g. <code>model.sample_rate</code>).
+Use <code>utils.convert_audio</code> if this is not the case.</dd>
+<dt><strong><code>fo</code></strong> :&ensp;<code>IO[bytes]</code></dt>
+<dd>file-object to which the compressed bits will be written.
+See <code><a title="encodec.compress.compress" href="#encodec.compress.compress">compress()</a></code> if you want obtain a <code>bytes</code> object instead.</dd>
+<dt><strong><code>use_lm</code></strong> :&ensp;<code>bool</code></dt>
+<dd>if True, use a pre-trained language model to further
+compress the stream using Entropy Coding. This will slow down compression
+quite a bit, expect between 20 to 30% of size reduction.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compress_to_file(model: EncodecModel, wav: torch.Tensor, fo: tp.IO[bytes],
+                     use_lm: bool = True):
+    &#34;&#34;&#34;Compress a waveform to a file-object using the given model.
+
+    Args:
+        model (EncodecModel): a pre-trained EncodecModel to use to compress the audio.
+        wav (torch.Tensor): waveform to compress, should have a shape `[C, T]`, with `C`
+            matching `model.channels`, and the proper sample rate (e.g. `model.sample_rate`).
+            Use `utils.convert_audio` if this is not the case.
+        fo (IO[bytes]): file-object to which the compressed bits will be written.
+            See `compress` if you want obtain a `bytes` object instead.
+        use_lm (bool): if True, use a pre-trained language model to further
+            compress the stream using Entropy Coding. This will slow down compression
+            quite a bit, expect between 20 to 30% of size reduction.
+    &#34;&#34;&#34;
+    assert wav.dim() == 2, &#34;Only single waveform can be encoded.&#34;
+    if model.name not in MODELS:
+        raise ValueError(f&#34;The provided model {model.name} is not supported.&#34;)
+
+    if use_lm:
+        lm = model.get_lm_model()
+
+    with torch.no_grad():
+        frames = model.encode(wav[None])
+
+    metadata = {
+        &#39;m&#39;: model.name,                 # model name
+        &#39;al&#39;: wav.shape[-1],             # audio_length
+        &#39;nc&#39;: frames[0][0].shape[1],     # num_codebooks
+        &#39;lm&#39;: use_lm,                    # use lm?
+    }
+    binary.write_ecdc_header(fo, metadata)
+
+    for (frame, scale) in frames:
+        if scale is not None:
+            fo.write(struct.pack(&#39;!f&#39;, scale.cpu().item()))
+        _, K, T = frame.shape
+        if use_lm:
+            coder = ArithmeticCoder(fo)
+            states: tp.Any = None
+            offset = 0
+            input_ = torch.zeros(1, K, 1, dtype=torch.long, device=wav.device)
+        else:
+            packer = binary.BitPacker(model.bits_per_codebook, fo)
+        for t in range(T):
+            if use_lm:
+                with torch.no_grad():
+                    probas, states, offset = lm(input_, states, offset)
+                # We emulate a streaming scenario even though we do not provide an API for it.
+                # This gives us a more accurate benchmark.
+                input_ = 1 + frame[:, :, t: t + 1]
+            for k, value in enumerate(frame[0, :, t].tolist()):
+                if use_lm:
+                    q_cdf = build_stable_quantized_cdf(
+                        probas[0, :, k, 0], coder.total_range_bits, check=False)
+                    coder.push(value, q_cdf)
+                else:
+                    packer.push(value)
+        if use_lm:
+            coder.flush()
+        else:
+            packer.flush()</code></pre>
+</details>
+</dd>
+<dt id="encodec.compress.decompress"><code class="name flex">
+<span>def <span class="ident">decompress</span></span>(<span>compressed: bytes, device='cpu') ‑> Tuple[torch.Tensor, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decompress from a file-object.
+Returns a tuple <code>(wav, sample_rate)</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>compressed</code></strong> :&ensp;<code>bytes</code></dt>
+<dd>compressed bytes.</dd>
+<dt><strong><code>device</code></strong></dt>
+<dd>device to use to perform the computations.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decompress(compressed: bytes, device=&#39;cpu&#39;) -&gt; tp.Tuple[torch.Tensor, int]:
+    &#34;&#34;&#34;Decompress from a file-object.
+    Returns a tuple `(wav, sample_rate)`.
+
+    Args:
+        compressed (bytes): compressed bytes.
+        device: device to use to perform the computations.
+    &#34;&#34;&#34;
+    fo = io.BytesIO(compressed)
+    return decompress_from_file(fo, device=device)</code></pre>
+</details>
+</dd>
+<dt id="encodec.compress.decompress_from_file"><code class="name flex">
+<span>def <span class="ident">decompress_from_file</span></span>(<span>fo: IO[bytes], device='cpu') ‑> Tuple[torch.Tensor, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decompress from a file-object.
+Returns a tuple <code>(wav, sample_rate)</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>fo</code></strong> :&ensp;<code>IO[bytes]</code></dt>
+<dd>file-object from which to read. If you want to decompress
+from <code>bytes</code> instead, see <code><a title="encodec.compress.decompress" href="#encodec.compress.decompress">decompress()</a></code>.</dd>
+<dt><strong><code>device</code></strong></dt>
+<dd>device to use to perform the computations.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decompress_from_file(fo: tp.IO[bytes], device=&#39;cpu&#39;) -&gt; tp.Tuple[torch.Tensor, int]:
+    &#34;&#34;&#34;Decompress from a file-object.
+    Returns a tuple `(wav, sample_rate)`.
+
+    Args:
+        fo (IO[bytes]): file-object from which to read. If you want to decompress
+            from `bytes` instead, see `decompress`.
+        device: device to use to perform the computations.
+    &#34;&#34;&#34;
+    metadata = binary.read_ecdc_header(fo)
+    model_name = metadata[&#39;m&#39;]
+    audio_length = metadata[&#39;al&#39;]
+    num_codebooks = metadata[&#39;nc&#39;]
+    use_lm = metadata[&#39;lm&#39;]
+    assert isinstance(audio_length, int)
+    assert isinstance(num_codebooks, int)
+    if model_name not in MODELS:
+        raise ValueError(f&#34;The audio was compressed with an unsupported model {model_name}.&#34;)
+    model = MODELS[model_name]().to(device)
+
+    if use_lm:
+        lm = model.get_lm_model()
+
+    frames: tp.List[EncodedFrame] = []
+    segment_length = model.segment_length or audio_length
+    segment_stride = model.segment_stride or audio_length
+    for offset in range(0, audio_length, segment_stride):
+        this_segment_length = min(audio_length - offset, segment_length)
+        frame_length = int(math.ceil(this_segment_length * model.frame_rate / model.sample_rate))
+        if model.normalize:
+            scale_f, = struct.unpack(&#39;!f&#39;, binary._read_exactly(fo, struct.calcsize(&#39;!f&#39;)))
+            scale = torch.tensor(scale_f, device=device).view(1)
+        else:
+            scale = None
+        if use_lm:
+            decoder = ArithmeticDecoder(fo)
+            states: tp.Any = None
+            offset = 0
+            input_ = torch.zeros(1, num_codebooks, 1, dtype=torch.long, device=device)
+        else:
+            unpacker = binary.BitUnpacker(model.bits_per_codebook, fo)
+        frame = torch.zeros(1, num_codebooks, frame_length, dtype=torch.long, device=device)
+        for t in range(frame_length):
+            if use_lm:
+                with torch.no_grad():
+                    probas, states, offset = lm(input_, states, offset)
+            code_list: tp.List[int] = []
+            for k in range(num_codebooks):
+                if use_lm:
+                    q_cdf = build_stable_quantized_cdf(
+                        probas[0, :, k, 0], decoder.total_range_bits, check=False)
+                    code = decoder.pull(q_cdf)
+                else:
+                    code = unpacker.pull()
+                if code is None:
+                    raise EOFError(&#34;The stream ended sooner than expected.&#34;)
+                code_list.append(code)
+            codes = torch.tensor(code_list, dtype=torch.long, device=device)
+            frame[0, :, t] = codes
+            if use_lm:
+                input_ = 1 + frame[:, :, t: t + 1]
+        frames.append((frame, scale))
+    with torch.no_grad():
+        wav = model.decode(frames)
+    return wav[0, :, :audio_length], model.sample_rate</code></pre>
+</details>
+</dd>
+<dt id="encodec.compress.test"><code class="name flex">
+<span>def <span class="ident">test</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test():
+    import torchaudio
+    torch.set_num_threads(1)
+    for name in MODELS.keys():
+        model = MODELS[name]()
+        sr = model.sample_rate // 1000
+        x, _ = torchaudio.load(f&#39;test_{sr}k.wav&#39;)
+        x = x[:, :model.sample_rate * 5]
+        model.set_target_bandwidth(12)
+        for use_lm in [False, True]:
+            print(f&#34;Doing {name}, use_lm={use_lm}&#34;)
+            begin = time.time()
+            res = compress(model, x, use_lm=use_lm)
+            t_comp = time.time() - begin
+            x_dec, _ = decompress(res)
+            t_decomp = time.time() - begin - t_comp
+            kbps = 8 * len(res) / 1000 / (x.shape[-1] / model.sample_rate)
+            print(f&#34;kbps: {kbps:.1f}, time comp: {t_comp:.1f} sec. &#34;
+                  f&#34;time decomp:{t_decomp:.1f}.&#34;)
+            assert x_dec.shape == x.shape</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="encodec" href="index.html">encodec</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="encodec.compress.compress" href="#encodec.compress.compress">compress</a></code></li>
+<li><code><a title="encodec.compress.compress_to_file" href="#encodec.compress.compress_to_file">compress_to_file</a></code></li>
+<li><code><a title="encodec.compress.decompress" href="#encodec.compress.decompress">decompress</a></code></li>
+<li><code><a title="encodec.compress.decompress_from_file" href="#encodec.compress.decompress_from_file">decompress_from_file</a></code></li>
+<li><code><a title="encodec.compress.test" href="#encodec.compress.test">test</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
