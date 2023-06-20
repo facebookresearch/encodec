@@ -35,20 +35,20 @@ entropy coding, by clicking the thumbnail (original tracks provided by [Lucille 
 
 ## 🤗 Transformers
 
-Encodec has been added to Transformers. For more information, please refer to [Transformers' Encodec docs](https://huggingface.co/docs/transformers/main/en/model_doc/encodec).
+Encodec has now been added to Transformers. For more information, please refer to [Transformers' Encodec docs](https://huggingface.co/docs/transformers/main/en/model_doc/encodec).
 
 You can find both the [24KHz](https://huggingface.co/facebook/encodec_24khz) and [48KHz](https://huggingface.co/facebook/encodec_48khz) checkpoints on the 🤗 Hub.
 
-Using 🤗 Transformers, you can use Encodec at scale along with all the other supported model and datasets. ⚡️
+Using 🤗 Transformers, you can leverage Encodec at scale along with all the other supported models and datasets. ⚡️
 Alternatively you can also directly use the encodec package, as detailed in the Usage section. 
 
-Set up your development environment!
+To use first you'd need to set up your development environment!
 ```
 pip install -U datasets 
 pip install git+https://github.com/huggingface/transformers.git@main
 ```
 
-Embed your datasets at scale!
+Then, start embedding your audio datasets at scale!
 ```python
 from datasets import load_dataset, Audio
 from transformers import EncodecModel, AutoProcessor
