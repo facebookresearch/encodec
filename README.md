@@ -73,6 +73,11 @@ audio_values = model.decode(encoder_outputs.audio_codes, encoder_outputs.audio_s
 
 # or the equivalent with a forward pass
 audio_values = model(inputs["input_values"], inputs["padding_mask"]).audio_values
+
+# you can also extract the discrete codebook representation for LM tasks
+# output: concatenated tensor of all the representations
+audio_codes = model(inputs["input_values"], inputs["padding_mask"]).audio_codes
+
 ```
 
 ## What's up?
