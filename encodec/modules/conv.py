@@ -83,7 +83,8 @@ def pad1d(x: torch.Tensor, paddings: tp.Tuple[int, int], mode: str = 'zero', val
     padding_left, padding_right = paddings
     assert padding_left >= 0 and padding_right >= 0, (padding_left, padding_right)
 
-    if mode != 'reflect': # Constant padding
+    # Constant padding
+    if mode != 'reflect':
         return F.pad(x, paddings, mode, value)
 
     # Reflect padding
