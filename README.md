@@ -33,6 +33,52 @@ entropy coding, by clicking the thumbnail (original tracks provided by [Lucille 
 <img src="./thumbnail.png" alt="Thumbnail for the sample video.
 	You will first here the ground truth, then ~3kbps, then 12kbps, for two songs."></a></p>
 
+## 🤗 Transformers
+
+Encodec has now been added to Transformers. For more information, please refer to [Transformers' Encodec docs](https://huggingface.co/docs/transformers/main/en/model_doc/encodec).
+
+You can find both the [24KHz](https://huggingface.co/facebook/encodec_24khz) and [48KHz](https://huggingface.co/facebook/encodec_48khz) checkpoints on the 🤗 Hub.
+
+Using 🤗 Transformers, you can leverage Encodec at scale along with all the other supported models and datasets. ⚡️
+Alternatively you can also directly use the encodec package, as detailed in the Usage section. 
+
+To use first you'd need to set up your development environment!
+```
+pip install -U datasets 
+pip install git+https://github.com/huggingface/transformers.git@main
+```
+
+Then, start embedding your audio datasets at scale!
+```python
+from datasets import load_dataset, Audio
+from transformers import EncodecModel, AutoProcessor
+
+# dummy dataset, however you can swap this with an dataset on the 🤗 hub or bring your own
+librispeech_dummy = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")
+
+# load the model + processor (for pre-processing the audio)
+model = EncodecModel.from_pretrained("facebook/encodec_24khz")
+processor = AutoProcessor.from_pretrained("facebook/encodec_24khz")
+
+# cast the audio data to the correct sampling rate for the model
+librispeech_dummy = librispeech_dummy.cast_column("audio", Audio(sampling_rate=processor.sampling_rate))
+audio_sample = librispeech_dummy[0]["audio"]["array"]
+
+# pre-process the inputs
+inputs = processor(raw_audio=audio_sample, sampling_rate=processor.sampling_rate, return_tensors="pt")
+
+# explicitly encode then decode the audio inputs
+encoder_outputs = model.encode(inputs["input_values"], inputs["padding_mask"])
+audio_values = model.decode(encoder_outputs.audio_codes, encoder_outputs.audio_scales, inputs["padding_mask"])[0]
+
+# or the equivalent with a forward pass
+audio_values = model(inputs["input_values"], inputs["padding_mask"]).audio_values
+
+# you can also extract the discrete codebook representation for LM tasks
+# output: concatenated tensor of all the representations
+audio_codes = model(inputs["input_values"], inputs["padding_mask"]).audio_codes
+
+```
 
 ## What's up?
 
