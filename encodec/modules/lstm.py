@@ -21,7 +21,9 @@ class SLSTM(nn.Module):
 
     def forward(self, x):
         x = x.permute(2, 0, 1)
-        y, _ = self.lstm(x)
+        with torch.autocast(enabled=False, device_type='cuda'): # LSTM doesn't support bfloat16
+            x = x.to(torch.float32)
+            y, _ = self.lstm(x)
         if self.skip:
             y = y + x
         y = y.permute(1, 2, 0)
